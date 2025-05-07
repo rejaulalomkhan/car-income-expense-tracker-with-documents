@@ -14,30 +14,25 @@ class Index extends Component
     public $search = '';
     public $selectedCar = '';
     public $selectedCategory = '';
-    public $startDate = '';
-    public $endDate = '';
+    public $dateFilter = 'this_month';
+    public $perPage = 25;
 
     protected $queryString = [
         'search' => ['except' => ''],
         'selectedCar' => ['except' => ''],
         'selectedCategory' => ['except' => ''],
-        'startDate' => ['except' => ''],
-        'endDate' => ['except' => ''],
+        'dateFilter' => ['except' => 'this_month'],
+        'perPage' => ['except' => 25],
     ];
 
     public function mount()
     {
-        // Initialize with empty date range to show all records by default
-        // Only set date range if it's not already set (from query parameters)
-        if (empty($this->startDate) && empty($this->endDate)) {
-            $this->startDate = now()->subMonths(3)->format('Y-m-d'); // Show last 3 months by default
-            $this->endDate = now()->format('Y-m-d');
-        }
+        // Default date filter is already set
     }
 
     public function resetFilters()
     {
-        $this->reset(['search', 'selectedCar', 'selectedCategory', 'startDate', 'endDate']);
+        $this->reset(['search', 'selectedCar', 'selectedCategory', 'dateFilter', 'perPage']);
         $this->resetPage();
     }
 
@@ -52,8 +47,58 @@ class Index extends Component
         session()->flash('message', 'Expense deleted successfully.');
     }
 
+    protected function getDateRange()
+    {
+        $now = now();
+
+        return match($this->dateFilter) {
+            'today' => [
+                $now->startOfDay(),
+                $now->clone()->endOfDay()
+            ],
+            'this_week' => [
+                $now->startOfWeek(),
+                $now->clone()->endOfWeek()
+            ],
+            'last_week' => [
+                $now->subWeek()->startOfWeek(),
+                $now->subWeek()->endOfWeek()
+            ],
+            'this_month' => [
+                $now->startOfMonth(),
+                $now->clone()->endOfMonth()
+            ],
+            'last_month' => [
+                $now->subMonth()->startOfMonth(),
+                $now->subMonth()->endOfMonth()
+            ],
+            'last_3_months' => [
+                $now->subMonths(3)->startOfMonth(),
+                $now->clone()->endOfMonth()
+            ],
+            'this_year' => [
+                $now->startOfYear(),
+                $now->clone()->endOfYear()
+            ],
+            'last_year' => [
+                $now->subYear()->startOfYear(),
+                $now->subYear()->endOfYear()
+            ],
+            'all_time' => [
+                now()->subYears(50), // Effectively "all time"
+                now()
+            ],
+            default => [
+                $now->startOfMonth(),
+                $now->clone()->endOfMonth()
+            ]
+        };
+    }
+
     public function render()
     {
+        [$startDate, $endDate] = $this->getDateRange();
+
         $query = Expense::query()
             ->with('car')
             ->when($this->search, function ($query) {
@@ -65,19 +110,38 @@ class Index extends Component
             ->when($this->selectedCategory, function ($query) {
                 $query->where('category_id', $this->selectedCategory);
             })
-            ->when($this->startDate, function ($query) {
-                $query->whereDate('date', '>=', $this->startDate);
-            })
-            ->when($this->endDate, function ($query) {
-                $query->whereDate('date', '<=', $this->endDate);
-            })
-            ->latest('date'); // Order by date instead of created_at
+            ->whereBetween('date', [
+                $startDate->format('Y-m-d'),
+                $endDate->format('Y-m-d')
+            ]);
 
-        $expenses = $query->paginate(10);
+        // Calculate total before applying pagination
+        $totalAmount = $query->sum('amount');
+
+        // Get paginated results
+        $expenses = $query->latest('date')->paginate($this->perPage);
 
         return view('livewire.expenses.index', [
             'expenses' => $expenses,
             'cars' => Car::all(),
+            'dateRangeText' => $this->getDateRangeText($startDate, $endDate),
+            'totalAmount' => $totalAmount,
         ]);
+    }
+
+    protected function getDateRangeText($startDate, $endDate)
+    {
+        return match($this->dateFilter) {
+            'today' => 'Today',
+            'this_week' => 'This Week',
+            'last_week' => 'Last Week',
+            'this_month' => 'This Month',
+            'last_month' => 'Last Month',
+            'last_3_months' => 'Last 3 Months',
+            'this_year' => 'This Year',
+            'last_year' => 'Last Year',
+            'all_time' => 'All Time',
+            default => $startDate->format('M j, Y') . ' - ' . $endDate->format('M j, Y')
+        };
     }
 }
