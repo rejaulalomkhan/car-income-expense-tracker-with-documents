@@ -30,6 +30,45 @@ class FinancialDashboard extends Component
         $this->endDate = Carbon::parse($this->selectedMonth)->endOfMonth()->format('Y-m-d');
     }
 
+    public function previousPeriod()
+    {
+        if ($this->filterType === 'month') {
+            // Move to previous month
+            $this->selectedMonth = Carbon::parse($this->selectedMonth)->subMonth()->format('Y-m');
+            $this->updatedSelectedMonth();
+        } else {
+            // For date range, calculate the period length and subtract it
+            $start = Carbon::parse($this->startDate);
+            $end = Carbon::parse($this->endDate);
+            $periodDays = $start->diffInDays($end) + 1;
+
+            $this->endDate = $start->subDay()->format('Y-m-d');
+            $this->startDate = $start->subDays($periodDays - 1)->format('Y-m-d');
+        }
+    }
+
+    public function nextPeriod()
+    {
+        if ($this->filterType === 'month') {
+            // Move to next month
+            $this->selectedMonth = Carbon::parse($this->selectedMonth)->addMonth()->format('Y-m');
+            $this->updatedSelectedMonth();
+        } else {
+            // For date range, calculate the period length and add it
+            $start = Carbon::parse($this->startDate);
+            $end = Carbon::parse($this->endDate);
+            $periodDays = $start->diffInDays($end) + 1;
+
+            $this->startDate = $end->addDay()->format('Y-m-d');
+            $this->endDate = $end->addDays($periodDays - 1)->format('Y-m-d');
+        }
+    }
+
+    public function continueToIterate()
+    {
+        $this->nextPeriod();
+    }
+
     public function getIncomes()
     {
         return Income::whereBetween('date', [$this->startDate, $this->endDate])
@@ -73,4 +112,4 @@ class FinancialDashboard extends Component
             'totalExpense' => $this->getGrandTotalExpense(),
         ]);
     }
-} 
+}
