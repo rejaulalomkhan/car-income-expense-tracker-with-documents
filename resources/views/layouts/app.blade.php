@@ -17,11 +17,12 @@
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Styles -->
+    <!-- Primary Styles -->
     @livewireStyles
+    @vite(['resources/css/app.css'])
 
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Deferred Scripts -->
+    @vite(['resources/js/app.js'])
 </head>
 
 <body class="font-sans antialiased">
@@ -43,8 +44,31 @@
         </main>
     </div>
 
+    <!-- Dynamic Scripts -->
     @stack('scripts')
     @livewireScripts
+
+    <!-- Livewire Navigation Progress Indicator -->
+    <script>
+        Livewire.on('navigating', () => {
+            const progressBar = document.createElement('div')
+            progressBar.className = 'fixed top-0 left-0 h-1 w-full bg-indigo-600'
+            progressBar.style.width = '0'
+            progressBar.style.transition = 'width 300ms ease'
+            document.body.appendChild(progressBar)
+
+            setTimeout(() => {
+                progressBar.style.width = '100%'
+            }, 100)
+
+            Livewire.on('navigated', () => {
+                progressBar.style.width = '100%'
+                setTimeout(() => {
+                    progressBar.remove()
+                }, 300)
+            })
+        })
+    </script>
 </body>
 
 </html>

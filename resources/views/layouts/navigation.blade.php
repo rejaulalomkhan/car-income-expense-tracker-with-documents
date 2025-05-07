@@ -5,19 +5,20 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" wire:navigate>
+                    <a href="{{ route('dashboard') }}" wire:navigate.hover>
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
+                        wire:navigate.hover>
                         <i class="fas fa-chart-line mr-2"></i>
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('cars.index')" :active="request()->routeIs('cars.*')" wire:navigate>
+                    <x-nav-link :href="route('cars.index')" :active="request()->routeIs('cars.*')" wire:navigate.hover>
                         <i class="fas fa-car mr-2"></i>
                         {{ __('Cars') }}
                     </x-nav-link>
@@ -41,11 +42,11 @@
                             </x-slot>
 
                             <x-slot name="content">
-                                <x-dropdown-link :href="route('documents.car.index')" wire:navigate>
+                                <x-dropdown-link :href="route('documents.car.index')" wire:navigate.hover>
                                     <i class="fas fa-id-card mr-2"></i>
                                     {{ __('Car Documents') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link :href="route('documents.company.index')" wire:navigate>
+                                <x-dropdown-link :href="route('documents.company.index')" wire:navigate.hover>
                                     <i class="fas fa-building mr-2"></i>
                                     {{ __('Company Documents') }}
                                 </x-dropdown-link>
@@ -53,13 +54,14 @@
                         </x-dropdown>
                     </div>
 
-                    <x-nav-link :href="route('incomes.index')" :active="request()->routeIs('incomes.*')" wire:navigate>
+                    <x-nav-link :href="route('incomes.index')" :active="request()->routeIs('incomes.*')"
+                        wire:navigate.hover>
                         <i class="fas fa-arrow-circle-down mr-2 text-green-600"></i>
                         {{ __('Incomes') }}
                     </x-nav-link>
 
                     <x-nav-link :href="route('expenses.index')" :active="request()->routeIs('expenses.*')"
-                        wire:navigate>
+                        wire:navigate.hover>
                         <i class="fas fa-arrow-circle-up mr-2 text-red-600"></i>
                         {{ __('Expenses') }}
                     </x-nav-link>
@@ -87,7 +89,7 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')" wire:navigate>
+                        <x-dropdown-link :href="route('profile.edit')" wire:navigate.hover>
                             <i class="fas fa-cog mr-2"></i>
                             {{ __('Profile') }}
                         </x-dropdown-link>
@@ -124,12 +126,14 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
+                wire:navigate.hover>
                 <i class="fas fa-chart-line mr-2"></i>
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('cars.index')" :active="request()->routeIs('cars.*')" wire:navigate>
+            <x-responsive-nav-link :href="route('cars.index')" :active="request()->routeIs('cars.*')"
+                wire:navigate.hover>
                 <i class="fas fa-car mr-2"></i>
                 {{ __('Cars') }}
             </x-responsive-nav-link>
@@ -137,25 +141,25 @@
             <!-- Mobile Documents Menu -->
             <div class="relative">
                 <x-responsive-nav-link :href="route('documents.car.index')"
-                    :active="request()->routeIs('documents.car.*')" wire:navigate>
+                    :active="request()->routeIs('documents.car.*')" wire:navigate.hover>
                     <i class="fas fa-id-card mr-2"></i>
                     {{ __('Car Documents') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('documents.company.index')"
-                    :active="request()->routeIs('documents.company.*')" wire:navigate>
+                    :active="request()->routeIs('documents.company.*')" wire:navigate.hover>
                     <i class="fas fa-building mr-2"></i>
                     {{ __('Company Documents') }}
                 </x-responsive-nav-link>
             </div>
 
             <x-responsive-nav-link :href="route('incomes.index')" :active="request()->routeIs('incomes.*')"
-                wire:navigate>
+                wire:navigate.hover>
                 <i class="fas fa-arrow-circle-down mr-2 text-green-600"></i>
                 {{ __('Incomes') }}
             </x-responsive-nav-link>
 
             <x-responsive-nav-link :href="route('expenses.index')" :active="request()->routeIs('expenses.*')"
-                wire:navigate>
+                wire:navigate.hover>
                 <i class="fas fa-arrow-circle-up mr-2 text-red-600"></i>
                 {{ __('Expenses') }}
             </x-responsive-nav-link>
@@ -169,7 +173,7 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')" wire:navigate>
+                <x-responsive-nav-link :href="route('profile.edit')" wire:navigate.hover>
                     <i class="fas fa-cog mr-2"></i>
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
