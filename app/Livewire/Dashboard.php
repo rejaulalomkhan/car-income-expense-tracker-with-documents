@@ -15,12 +15,13 @@ class Dashboard extends Component
 {
     use WithPagination;
 
-    public $dateFilter = 'today';
+    public $dateFilter = 'this_month';
     public $startDate;
     public $endDate;
     public $selectedCar = 'all';
     public $stats = [];
     public $chartData = [];
+    public $records = [];
 
     protected $queryString = ['dateFilter', 'startDate', 'endDate', 'selectedCar'];
 
@@ -29,7 +30,6 @@ class Dashboard extends Component
         $now = Carbon::now();
         $this->startDate = $now->startOfMonth()->format('Y-m-d');
         $this->endDate = $now->endOfMonth()->format('Y-m-d');
-        $this->dateFilter = 'this_month';
     }
 
     public function mount()
@@ -37,17 +37,18 @@ class Dashboard extends Component
         $this->updateStats();
     }
 
-    public function updatedDateFilter()
+    public function updatedDateFilter($value)
     {
         $now = Carbon::now();
-        switch ($this->dateFilter) {
+
+        switch ($value) {
             case 'today':
-                $this->startDate = $now->startOfDay()->format('Y-m-d');
-                $this->endDate = $now->endOfDay()->format('Y-m-d');
+                $this->startDate = $now->format('Y-m-d');
+                $this->endDate = $now->format('Y-m-d');
                 break;
             case 'yesterday':
-                $this->startDate = $now->subDay()->startOfDay()->format('Y-m-d');
-                $this->endDate = $now->endOfDay()->format('Y-m-d');
+                $this->startDate = $now->subDay()->format('Y-m-d');
+                $this->endDate = $now->format('Y-m-d');
                 break;
             case 'this_month':
                 $this->startDate = $now->startOfMonth()->format('Y-m-d');
@@ -66,6 +67,7 @@ class Dashboard extends Component
                 $this->endDate = $now->endOfYear()->format('Y-m-d');
                 break;
         }
+
         $this->updateStats();
         $this->dispatch('dateRangeUpdated', [
             'startDate' => $this->startDate,
@@ -75,17 +77,11 @@ class Dashboard extends Component
 
     public function updatedStartDate()
     {
-        if ($this->dateFilter !== 'custom') {
-            $this->dateFilter = 'custom';
-        }
         $this->updateStats();
     }
 
     public function updatedEndDate()
     {
-        if ($this->dateFilter !== 'custom') {
-            $this->dateFilter = 'custom';
-        }
         $this->updateStats();
     }
 
@@ -96,23 +92,25 @@ class Dashboard extends Component
 
     public function updateStats()
     {
-        $query = Income::query()
+        // Calculate total income
+        $incomeQuery = Income::query()
             ->whereBetween('date', [$this->startDate, $this->endDate]);
 
         if ($this->selectedCar !== 'all') {
-            $query->where('car_id', $this->selectedCar);
+            $incomeQuery->where('car_id', $this->selectedCar);
         }
 
-        $totalIncome = $query->sum('amount');
+        $totalIncome = $incomeQuery->sum('amount');
 
-        $query = Expense::query()
+        // Calculate total expenses
+        $expenseQuery = Expense::query()
             ->whereBetween('date', [$this->startDate, $this->endDate]);
 
         if ($this->selectedCar !== 'all') {
-            $query->where('car_id', $this->selectedCar);
+            $expenseQuery->where('car_id', $this->selectedCar);
         }
 
-        $totalExpense = $query->sum('amount');
+        $totalExpense = $expenseQuery->sum('amount');
         $netIncome = $totalIncome - $totalExpense;
 
         $this->stats = [
@@ -122,8 +120,14 @@ class Dashboard extends Component
             'profit_margin' => $totalIncome > 0 ? ($netIncome / $totalIncome) * 100 : 0,
         ];
 
-        // Generate chart data
+        // Update chart data
         $this->generateChartData();
+
+        // Get records for the table
+        $this->getRecords();
+
+        // Emit chart data updated event
+        $this->dispatch('chartDataUpdated', $this->chartData);
     }
 
     protected function generateChartData()
@@ -137,36 +141,44 @@ class Dashboard extends Component
         $expenseData = [];
 
         if ($diffInDays <= 31) {
-            // Daily data
-            for ($date = $start; $date <= $end; $date->addDay()) {
+            // Daily data for periods up to a month
+            for ($date = clone $start; $date <= $end; $date->addDay()) {
                 $labels[] = $date->format('M d');
-                $incomeData[] = Income::whereDate('date', $date)
-                    ->when($this->selectedCar !== 'all', function ($query) {
-                        return $query->where('car_id', $this->selectedCar);
-                    })
-                    ->sum('amount');
-                $expenseData[] = Expense::whereDate('date', $date)
-                    ->when($this->selectedCar !== 'all', function ($query) {
-                        return $query->where('car_id', $this->selectedCar);
-                    })
-                    ->sum('amount');
+
+                $incomeQuery = Income::whereDate('date', $date);
+                $expenseQuery = Expense::whereDate('date', $date);
+
+                if ($this->selectedCar !== 'all') {
+                    $incomeQuery->where('car_id', $this->selectedCar);
+                    $expenseQuery->where('car_id', $this->selectedCar);
+                }
+
+                $incomeData[] = $incomeQuery->sum('amount');
+                $expenseData[] = $expenseQuery->sum('amount');
             }
         } else {
-            // Monthly data
-            for ($date = $start; $date <= $end; $date->addMonth()) {
+            // Monthly data for longer periods
+            for ($date = clone $start; $date <= $end; $date->addMonth()) {
                 $labels[] = $date->format('M Y');
-                $incomeData[] = Income::whereYear('date', $date->year)
-                    ->whereMonth('date', $date->month)
-                    ->when($this->selectedCar !== 'all', function ($query) {
-                        return $query->where('car_id', $this->selectedCar);
-                    })
-                    ->sum('amount');
-                $expenseData[] = Expense::whereYear('date', $date->year)
-                    ->whereMonth('date', $date->month)
-                    ->when($this->selectedCar !== 'all', function ($query) {
-                        return $query->where('car_id', $this->selectedCar);
-                    })
-                    ->sum('amount');
+                $monthEnd = (clone $date)->endOfMonth();
+
+                $incomeQuery = Income::whereBetween('date', [
+                    $date->format('Y-m-d'),
+                    $monthEnd->format('Y-m-d')
+                ]);
+
+                $expenseQuery = Expense::whereBetween('date', [
+                    $date->format('Y-m-d'),
+                    $monthEnd->format('Y-m-d')
+                ]);
+
+                if ($this->selectedCar !== 'all') {
+                    $incomeQuery->where('car_id', $this->selectedCar);
+                    $expenseQuery->where('car_id', $this->selectedCar);
+                }
+
+                $incomeData[] = $incomeQuery->sum('amount');
+                $expenseData[] = $expenseQuery->sum('amount');
             }
         }
 
@@ -175,6 +187,42 @@ class Dashboard extends Component
             'income' => $incomeData,
             'expense' => $expenseData,
         ];
+    }
+
+    protected function getRecords()
+    {
+        $start = Carbon::parse($this->startDate);
+        $end = Carbon::parse($this->endDate);
+
+        $records = collect();
+        for ($date = clone $start; $date <= $end; $date->addDay()) {
+            $dayIncomes = Income::with('car')
+                ->whereDate('date', $date)
+                ->when($this->selectedCar !== 'all', function ($query) {
+                    return $query->where('car_id', $this->selectedCar);
+                })
+                ->get();
+
+            $dayExpenses = Expense::with('car')
+                ->whereDate('date', $date)
+                ->when($this->selectedCar !== 'all', function ($query) {
+                    return $query->where('car_id', $this->selectedCar);
+                })
+                ->get();
+
+            if ($dayIncomes->isNotEmpty() || $dayExpenses->isNotEmpty()) {
+                $record = (object)[
+                    'date' => clone $date,
+                    'incomes' => $dayIncomes,
+                    'expenses' => $dayExpenses,
+                    'total_income' => $dayIncomes->sum('amount'),
+                    'total_expense' => $dayExpenses->sum('amount')
+                ];
+                $records->push($record);
+            }
+        }
+
+        $this->records = $records;
     }
 
     public function exportReport()
@@ -187,57 +235,20 @@ class Dashboard extends Component
 
     public function render()
     {
-        $records = Income::select('date')
-            ->whereBetween('date', [$this->startDate, $this->endDate])
-            ->union(
-                Expense::select('date')
-                    ->whereBetween('date', [$this->startDate, $this->endDate])
-            )
-            ->distinct()
-            ->orderBy('date')
-            ->get()
-            ->map(function ($record) {
-                $date = $record->date;
-                return (object) [
-                    'date' => Carbon::parse($date),
-                    'incomes' => Income::whereDate('date', $date)
-                        ->when($this->selectedCar !== 'all', function ($query) {
-                            return $query->where('car_id', $this->selectedCar);
-                        })->get(),
-                    'expenses' => Expense::whereDate('date', $date)
-                        ->when($this->selectedCar !== 'all', function ($query) {
-                            return $query->where('car_id', $this->selectedCar);
-                        })->get(),
-                    'total_income' => Income::whereDate('date', $date)
-                        ->when($this->selectedCar !== 'all', function ($query) {
-                            return $query->where('car_id', $this->selectedCar);
-                        })->sum('amount'),
-                    'total_expense' => Expense::whereDate('date', $date)
-                        ->when($this->selectedCar !== 'all', function ($query) {
-                            return $query->where('car_id', $this->selectedCar);
-                        })->sum('amount')
-                ];
-            });
+        $cars = Car::all();
+        $recentIncomes = Income::with('car')
+            ->latest('date')
+            ->take(5)
+            ->get();
+        $recentExpenses = Expense::with('car')
+            ->latest('date')
+            ->take(5)
+            ->get();
 
         return view('livewire.dashboard', [
-            'cars' => Car::all(),
-            'records' => $records,
-            'recentIncomes' => Income::with('car')
-                ->when($this->selectedCar !== 'all', function ($query) {
-                    return $query->where('car_id', $this->selectedCar);
-                })
-                ->whereBetween('date', [$this->startDate, $this->endDate])
-                ->latest()
-                ->take(5)
-                ->get(),
-            'recentExpenses' => Expense::with('car')
-                ->when($this->selectedCar !== 'all', function ($query) {
-                    return $query->where('car_id', $this->selectedCar);
-                })
-                ->whereBetween('date', [$this->startDate, $this->endDate])
-                ->latest()
-                ->take(5)
-                ->get(),
-        ])->layout('components.layouts.app');
+            'cars' => $cars,
+            'recentIncomes' => $recentIncomes,
+            'recentExpenses' => $recentExpenses,
+        ]);
     }
 }

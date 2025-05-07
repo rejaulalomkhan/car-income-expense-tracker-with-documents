@@ -185,129 +185,134 @@
                 </div>
             </div>
         </div>
-<!-- End of Income VS Expense Transactions -->
+        <!-- End of Income VS Expense Transactions -->
 
         <div class="max-w-full overflow-x-auto mt-6 mb-11">
             <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden text-center text-xs">
-            <thead>
-                <tr>
-                <th colspan="{{ count($cars) + 3 }}" class="bg-sky-200 text-sky-800 px-4 py-2 border border-gray-300">
-                <div class="flex justify-between items-center">
-                <a href="{{ route('incomes.create') }}" class="inline-flex items-center px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white text-[10px] sm:text-sm font-medium rounded-full transition duration-150 ease-in-out">
-                    <i class="fas fa-plus text-[8px] sm:text-xs mr-1"></i>
-                    Add Income
-                </a>
+                <thead>
+                    <tr>
+                        <th colspan="{{ count($cars) + 3 }}"
+                            class="bg-sky-200 text-sky-800 px-4 py-2 border border-gray-300">
+                            <div class="flex justify-between items-center">
+                                <a href="{{ route('incomes.create') }}"
+                                    class="inline-flex items-center px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white text-[10px] sm:text-sm font-medium rounded-full transition duration-150 ease-in-out">
+                                    <i class="fas fa-plus text-[8px] sm:text-xs mr-1"></i>
+                                    Add Income
+                                </a>
 
-                   <h3 class="text-[12px] sm:text-lg font-medium text-sky-900">Income vs Expenses</h3>
+                                <h3 class="text-[12px] sm:text-lg font-medium text-sky-900">Income vs Expenses</h3>
 
-                    <a href="{{ route('expenses.create') }}" class="inline-flex items-center px-2 py-1 bg-red-500 hover:bg-red-600 text-white text-[10px] sm:text-sm font-medium rounded-full transition duration-150 ease-in-out">
-                        <i class="fas fa-plus text-[8px] sm:text-xs mr-1"></i>
-                        Add Expense
-                    </a>
-                </div>
-                </th>
-                </tr>
-                <tr class="bg-gray-100 text-gray-700 ">
-                <th class="border border-gray-300 px-[2px] py-[2px]">Date</th>
-                @foreach ($cars as $car)
-                <th class="border border-gray-300 px-[2px] py-[8px]">
-                    <i class="fas fa-car mr-2 text-gray-400"></i>
-                    {{ $car->name }}
-                </th>
-                @endforeach
-                <th class="border border-gray-300 px-[2px] py-[2px]">Total</th>
-                <th class="border border-gray-300 px-[2px] py-[2px]">Net Profit/Loss</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($records as $record)
-                <tr class="odd:bg-white even:bg-gray-50">
-                <td class="border border-gray-300 px-[2px] py-[2px]">
-                    <i class="fas fa-calendar-alt mr-2 text-gray-400"></i>
-                    {{ $record->date->format('M d, Y') }}
-                </td>
-                @php
-                $totalIncome = 0;
-                $totalExpense = 0;
-                @endphp
-                @foreach ($cars as $car)
-                @php
-                $income = $record->incomes->where('car_id', $car->id)->sum('amount');
-                $expense = $record->expenses->where('car_id', $car->id)->sum('amount');
-                $totalIncome += $income;
-                $totalExpense += $expense;
-                @endphp
-                <td class="border border-gray-300 px-[2px] py-[2px]">
-                    <div class="text-green-800">
-                    <i class="fas fa-arrow-up text-[10px]"></i>
-                    ৳ {{ number_format($income) }}
-                    </div>
-                    <div class="text-red-500">
-                    <i class="fas fa-arrow-down text-[10px]"></i>
-                    ৳ {{ number_format($expense) }}
-                    </div>
-                </td>
-                @endforeach
-                <td class="border border-gray-300 px-[2px] py-[2px]">
-                    <div class="text-green-800">
-                    <i class="fas fa-arrow-up text-[10px]"></i>
-                    ৳ {{ number_format($totalIncome) }}
-                    </div>
-                    <div class="text-red-500">
-                    <i class="fas fa-arrow-down text-[10px]"></i>
-                    ৳ {{ number_format($totalExpense) }}
-                    </div>
-                </td>
-                <td
-                    class="border border-gray-300 px-[2px] py-[2px] {{ ($totalIncome - $totalExpense) >= 0 ? 'text-green-800' : 'text-red-500' }}">
-                    ৳ {{ number_format(abs($totalIncome - $totalExpense)) }}
-                    <i class="fas fa-{{ ($totalIncome - $totalExpense) >= 0 ? 'arrow-up' : 'arrow-down' }} text-[10px]"></i>
-                </td>
-                </tr>
-                @endforeach
-            </tbody>
-            <tfoot>
-                <tr class="bg-gray-200 font-semibold text-gray-900">
-                <td class="border border-gray-300 px-[2px] py-[2px] text-right">Grand Total:</td>
-                @foreach ($cars as $car)
-                @php
-                $carTotalIncome = $records->sum(fn($record) => $record->incomes->where('car_id',
-                $car->id)->sum('amount'));
-                $carTotalExpense = $records->sum(fn($record) => $record->expenses->where('car_id',
-                $car->id)->sum('amount'));
-                @endphp
-                <td class="border border-gray-300 px-[2px] py-[2px]">
-                    <div class="text-green-800">
-                    <i class="fas fa-arrow-up text-[10px]"></i>
-                    ৳ {{ number_format($carTotalIncome) }}
-                    </div>
-                    <div class="text-red-500">
-                    <i class="fas fa-arrow-down text-[10px]"></i>
-                    ৳ {{ number_format($carTotalExpense) }}
-                    </div>
-                </td>
-                @endforeach
-                @php
-                $grandTotalIncome = $records->sum('total_income');
-                $grandTotalExpense = $records->sum('total_expense');
-                @endphp
-                <td class="border border-gray-300 px-[2px] py-[2px]">
-                    <div class="text-green-800">
-                    <i class="fas fa-arrow-up text-[10px]"></i>
-                    ৳ {{ number_format($grandTotalIncome) }}
-                    </div>
-                    <div class="text-red-500">
-                    <i class="fas fa-arrow-down text-[10px]"></i>
-                    ৳ {{ number_format($grandTotalExpense) }}
-                    </div>
-                </td>
-                <td
-                    class="border border-gray-300 px-[2px] py-[2px] {{ ($grandTotalIncome - $grandTotalExpense) >= 0 ? 'text-green-800' : 'text-red-500' }}">
-                    ৳ {{ number_format(abs($grandTotalIncome - $grandTotalExpense)) }}
-                    <i class="fas fa-{{ ($grandTotalIncome - $grandTotalExpense) >= 0 ? 'arrow-up' : 'arrow-down' }} text-[10px]"></i>
-                </td>
-                </tr>
-            </tfoot>
+                                <a href="{{ route('expenses.create') }}"
+                                    class="inline-flex items-center px-2 py-1 bg-red-500 hover:bg-red-600 text-white text-[10px] sm:text-sm font-medium rounded-full transition duration-150 ease-in-out">
+                                    <i class="fas fa-plus text-[8px] sm:text-xs mr-1"></i>
+                                    Add Expense
+                                </a>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr class="bg-gray-100 text-gray-700 ">
+                        <th class="border border-gray-300 px-[2px] py-[2px]">Date</th>
+                        @foreach ($cars as $car)
+                        <th class="border border-gray-300 px-[2px] py-[8px]">
+                            <i class="fas fa-car mr-2 text-gray-400"></i>
+                            {{ $car->name }}
+                        </th>
+                        @endforeach
+                        <th class="border border-gray-300 px-[2px] py-[2px]">Total</th>
+                        <th class="border border-gray-300 px-[2px] py-[2px]">Net Profit/Loss</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($records as $record)
+                    <tr class="odd:bg-white even:bg-gray-50">
+                        <td class="border border-gray-300 px-[2px] py-[2px]">
+                            <i class="fas fa-calendar-alt mr-2 text-gray-400"></i>
+                            {{ $record->date->format('M d, Y') }}
+                        </td>
+                        @php
+                        $totalIncome = 0;
+                        $totalExpense = 0;
+                        @endphp
+                        @foreach ($cars as $car)
+                        @php
+                        $income = $record->incomes->where('car_id', $car->id)->sum('amount');
+                        $expense = $record->expenses->where('car_id', $car->id)->sum('amount');
+                        $totalIncome += $income;
+                        $totalExpense += $expense;
+                        @endphp
+                        <td class="border border-gray-300 px-[2px] py-[2px]">
+                            <div class="text-green-800">
+                                <i class="fas fa-arrow-up text-[10px]"></i>
+                                ৳ {{ number_format($income) }}
+                            </div>
+                            <div class="text-red-500">
+                                <i class="fas fa-arrow-down text-[10px]"></i>
+                                ৳ {{ number_format($expense) }}
+                            </div>
+                        </td>
+                        @endforeach
+                        <td class="border border-gray-300 px-[2px] py-[2px]">
+                            <div class="text-green-800">
+                                <i class="fas fa-arrow-up text-[10px]"></i>
+                                ৳ {{ number_format($totalIncome) }}
+                            </div>
+                            <div class="text-red-500">
+                                <i class="fas fa-arrow-down text-[10px]"></i>
+                                ৳ {{ number_format($totalExpense) }}
+                            </div>
+                        </td>
+                        <td
+                            class="border border-gray-300 px-[2px] py-[2px] {{ ($totalIncome - $totalExpense) >= 0 ? 'text-green-800' : 'text-red-500' }}">
+                            ৳ {{ number_format(abs($totalIncome - $totalExpense)) }}
+                            <i
+                                class="fas fa-{{ ($totalIncome - $totalExpense) >= 0 ? 'arrow-up' : 'arrow-down' }} text-[10px]"></i>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                    <tr class="bg-gray-200 font-semibold text-gray-900">
+                        <td class="border border-gray-300 px-[2px] py-[2px] text-right">Grand Total:</td>
+                        @foreach ($cars as $car)
+                        @php
+                        $carTotalIncome = $records->sum(fn($record) => $record->incomes->where('car_id',
+                        $car->id)->sum('amount'));
+                        $carTotalExpense = $records->sum(fn($record) => $record->expenses->where('car_id',
+                        $car->id)->sum('amount'));
+                        @endphp
+                        <td class="border border-gray-300 px-[2px] py-[2px]">
+                            <div class="text-green-800">
+                                <i class="fas fa-arrow-up text-[10px]"></i>
+                                ৳ {{ number_format($carTotalIncome) }}
+                            </div>
+                            <div class="text-red-500">
+                                <i class="fas fa-arrow-down text-[10px]"></i>
+                                ৳ {{ number_format($carTotalExpense) }}
+                            </div>
+                        </td>
+                        @endforeach
+                        @php
+                        $grandTotalIncome = $records->sum('total_income');
+                        $grandTotalExpense = $records->sum('total_expense');
+                        @endphp
+                        <td class="border border-gray-300 px-[2px] py-[2px]">
+                            <div class="text-green-800">
+                                <i class="fas fa-arrow-up text-[10px]"></i>
+                                ৳ {{ number_format($grandTotalIncome) }}
+                            </div>
+                            <div class="text-red-500">
+                                <i class="fas fa-arrow-down text-[10px]"></i>
+                                ৳ {{ number_format($grandTotalExpense) }}
+                            </div>
+                        </td>
+                        <td
+                            class="border border-gray-300 px-[2px] py-[2px] {{ ($grandTotalIncome - $grandTotalExpense) >= 0 ? 'text-green-800' : 'text-red-500' }}">
+                            ৳ {{ number_format(abs($grandTotalIncome - $grandTotalExpense)) }}
+                            <i
+                                class="fas fa-{{ ($grandTotalIncome - $grandTotalExpense) >= 0 ? 'arrow-up' : 'arrow-down' }} text-[10px]"></i>
+                        </td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
         <!-- Chart Section -->
@@ -433,7 +438,7 @@
         </div>
 
         <!-- Icone VS Expense in one table with total at bottom of table -->
-         <div class="max-w-full overflow-x-auto mt-6 mb-11">
+        <div class="max-w-full overflow-x-auto mt-6 mb-11">
             <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden text-center">
                 <thead>
                     <tr>
@@ -520,70 +525,49 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     document.addEventListener('livewire:initialized', function () {
-        // Initialize Flatpickr for desktop
-        const dateRangePicker = flatpickr("#date-range", {
-            mode: "range",
-            dateFormat: "Y-m-d",
-            defaultDate: [
-                @this.startDate || new Date().toISOString().split('T')[0],
-                @this.endDate || new Date().toISOString().split('T')[0]
-            ],
-            onChange: function(selectedDates, dateStr) {
-                if (selectedDates.length === 2) {
-                    updateDateRange(selectedDates, 'desktop');
-                }
-            }
-        });
+        let dateRangePicker, dateRangePickerMobile;
 
-        // Initialize Flatpickr for mobile
-        const dateRangePickerMobile = flatpickr("#date-range-mobile", {
-            mode: "range",
-            dateFormat: "Y-m-d",
-            defaultDate: [
-                @this.startDate || new Date().toISOString().split('T')[0],
-                @this.endDate || new Date().toISOString().split('T')[0]
-            ],
-            onChange: function(selectedDates, dateStr) {
-                if (selectedDates.length === 2) {
-                    updateDateRange(selectedDates, 'mobile');
+        // Initialize date pickers with common configuration
+        function initializeDatePickers() {
+            const commonConfig = {
+                mode: "range",
+                dateFormat: "Y-m-d",
+                defaultDate: [
+                    @this.startDate || new Date().toISOString().split('T')[0],
+                    @this.endDate || new Date().toISOString().split('T')[0]
+                ],
+                disableMobile: "true",
+                onChange: function(selectedDates, dateStr, instance) {
+                    if (selectedDates.length === 2) {
+                        updateDateRange(selectedDates, instance.element.id === 'date-range' ? 'desktop' : 'mobile');
+                    }
                 }
-            }
-        });
+            };
 
-        // Common function to update date range for both mobile and desktop
+            dateRangePicker = flatpickr("#date-range", commonConfig);
+            dateRangePickerMobile = flatpickr("#date-range-mobile", commonConfig);
+        }
+
+        // Function to update date range and sync UI
         function updateDateRange(selectedDates, device) {
             const startDate = selectedDates[0].toISOString().split('T')[0];
             const endDate = selectedDates[1].toISOString().split('T')[0];
 
             // Update hidden inputs which are bound to Livewire
-            document.getElementById('start-date').value = startDate;
-            document.getElementById('end-date').value = endDate;
+            @this.$set('startDate', startDate);
+            @this.$set('endDate', endDate);
+            @this.$set('dateFilter', 'custom');
 
-            // Dispatch events to trigger Livewire update
-            document.getElementById('start-date').dispatchEvent(new Event('input'));
-            document.getElementById('end-date').dispatchEvent(new Event('input'));
-
-            // Update date filter to custom
-            const filterId = device === 'mobile' ? 'date-filter-mobile' : 'date-filter';
-            document.getElementById(filterId).value = 'custom';
-            document.getElementById(filterId).dispatchEvent(new Event('change'));
-
-            // Update period display for both mobile and desktop
-            const startMonth = selectedDates[0].toLocaleString('default', { month: 'long', year: 'numeric' });
-            const endMonth = selectedDates[1].toLocaleString('default', { month: 'long', year: 'numeric' });
-            const periodText = startMonth === endMonth ? startMonth : `${startMonth} - ${endMonth}`;
-
-            document.getElementById('selected-period').textContent = periodText;
-            document.getElementById('selected-period-mobile').textContent = periodText;
-        }
-
-        // Listen for Livewire events to update the date picker
-        Livewire.on('dateRangeUpdated', ({ startDate, endDate }) => {
-            // Update both date pickers
-            dateRangePicker.setDate([startDate, endDate]);
-            dateRangePickerMobile.setDate([startDate, endDate]);
+            // Update filter dropdowns to show 'custom'
+            document.getElementById('date-filter').value = 'custom';
+            document.getElementById('date-filter-mobile').value = 'custom';
 
             // Update period displays
+            updatePeriodDisplay(startDate, endDate);
+        }
+
+        // Function to update period display text
+        function updatePeriodDisplay(startDate, endDate) {
             const start = new Date(startDate);
             const end = new Date(endDate);
             const startMonth = start.toLocaleString('default', { month: 'long', year: 'numeric' });
@@ -592,6 +576,29 @@
 
             document.getElementById('selected-period').textContent = periodText;
             document.getElementById('selected-period-mobile').textContent = periodText;
+        }
+
+        // Initialize date pickers
+        initializeDatePickers();
+
+        // Listen for changes in the quick filter dropdowns
+        ['date-filter', 'date-filter-mobile'].forEach(id => {
+            document.getElementById(id).addEventListener('change', function(e) {
+                if (e.target.value !== 'custom') {
+                    // Let Livewire handle the date calculations
+                    @this.$set('dateFilter', e.target.value);
+                }
+            });
+        });
+
+        // Listen for Livewire events to update the date picker
+        Livewire.on('dateRangeUpdated', ({ startDate, endDate }) => {
+            // Update both date pickers
+            dateRangePicker.setDate([startDate, endDate]);
+            dateRangePickerMobile.setDate([startDate, endDate]);
+
+            // Update the period display
+            updatePeriodDisplay(startDate, endDate);
         });
 
         // Initialize Chart.js
@@ -647,6 +654,7 @@
             }
         });
 
+        // Update chart when data changes
         Livewire.on('chartDataUpdated', (data) => {
             chart.data.labels = data.labels;
             chart.data.datasets[0].data = data.income;
