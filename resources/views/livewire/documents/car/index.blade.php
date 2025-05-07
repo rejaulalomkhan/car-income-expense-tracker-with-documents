@@ -130,22 +130,18 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($document->document_expiry_date->isPast())
-                                    <span
-                                        class="px-2 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                        <i class="fas fa-exclamation-circle mr-1"></i> Expired
-                                    </span>
-                                    @elseif($document->document_expiry_date->diffInDays(now()) <= 30) <span
-                                        class="px-2 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                        <i class="fas fa-clock mr-1"></i> Expiring Soon <span
-                                            class="ml-1 hidden sm:inline">(৩০ দিন বা এক মাসের কম)</span>
+                                        <span class="px-2 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            <i class="fas fa-exclamation-circle mr-1"></i> Expired
                                         </span>
-                                        @else
-                                        <span
-                                            class="px-2 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            <i class="fas fa-check-circle mr-1"></i> Valid <span
-                                                class="ml-1 hidden sm:inline">(১ মাসের বেশি)</span>
+                                    @elseif($document->document_expiry_date->greaterThan(now()->addDays(30)))
+                                        <span class="px-2 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            <i class="fas fa-check-circle mr-1"></i> Valid
                                         </span>
-                                        @endif
+                                    @else
+                                        <span class="px-2 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                            <i class="fas fa-clock mr-1"></i> Expiring Soon
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <a href="{{ route('documents.car.edit', $document) }}"

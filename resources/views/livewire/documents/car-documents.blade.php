@@ -82,17 +82,26 @@
                                             </span>
                                         @elseif($document->document_expiry_date->diffInDays(now()) <= 30)
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                Expiring Soon
+                                                Expiring Soon <span class="ml-1 hidden sm:inline">(৩০ দিন বা এক মাসের কম)</span>
                                             </span>
                                         @else
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                Valid
+                                                Valid <span class="ml-1 hidden sm:inline">(১ মাসের বেশি)</span>
                                             </span>
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <button wire:click="edit({{ $document->id }})" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
-                                        <a href="{{ Storage::url($document->document_image) }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 mr-3">View</a>
+                                        @if($document->document_image)
+                                            <a href="{{ Storage::url($document->document_image) }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 mr-3" title="View PDF">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="inline w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                    <rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                                                    <path d="M8 16h8M8 12h8M8 8h8" stroke="currentColor" stroke-width="2"/>
+                                                </svg>
+                                                View
+                                            </a>
+                                        @endif
                                         <button wire:click="delete({{ $document->id }})" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to delete this document?')">Delete</button>
                                     </td>
                                 </tr>

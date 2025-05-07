@@ -92,31 +92,37 @@
                                     <span class="text-sm text-gray-900">{{ $document->getTypeLabel() }}</span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="text-sm text-gray-900">{{ $document->expiry_date->format('Y-m-d')
-                                        }}</span>
+                                    <span class="text-sm text-gray-900">{{ $document->expiry_date->format('Y-m-d') }}</span>
+                                    <span class="text-xs text-gray-500 block">{{ $document->expiry_date->diffForHumans() }}</span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($document->expiry_date->isPast())
-                                    <span
-                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                        Expired
-                                    </span>
-                                    @elseif($document->expiry_date->diffInDays(now()) <= 30) <span
-                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                        Expiring Soon
+                                        <span class="px-2 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            <i class="fas fa-exclamation-circle mr-1"></i> Expired
                                         </span>
-                                        @else
-                                        <span
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Valid
+                                    @elseif($document->expiry_date->greaterThan(now()->addDays(30)))
+                                        <span class="px-2 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            <i class="fas fa-check-circle mr-1"></i> Valid
                                         </span>
-                                        @endif
+                                    @else
+                                        <span class="px-2 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                            <i class="fas fa-clock mr-1"></i> Expiring Soon
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <a href="{{ route('documents.company.edit', $document) }}"
                                         class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                    <a href="{{ Storage::url($document->document_file) }}" target="_blank"
-                                        class="text-indigo-600 hover:text-indigo-900 mr-3">View</a>
+                                    @if($document->document_file)
+                                        <a href="{{ Storage::url($document->document_file) }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 mr-3" title="View PDF">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="inline w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                <rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                                                <path d="M8 16h8M8 12h8M8 8h8" stroke="currentColor" stroke-width="2"/>
+                                            </svg>
+                                            View
+                                        </a>
+                                    @endif
                                     <button wire:click="delete({{ $document->id }})"
                                         class="text-red-600 hover:text-red-900"
                                         onclick="return confirm('Are you sure you want to delete this document?')">Delete</button>
