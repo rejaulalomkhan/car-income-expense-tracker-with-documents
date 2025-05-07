@@ -15,7 +15,7 @@
                         <div>
                             <label for="car_id" class="block text-sm font-medium text-gray-700">Car *</label>
                             <select wire:model="car_id" id="car_id"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 @error('car_id') border-red-300 @enderror">
+                                class="mt-1 block w-full form-select rounded-md @error('car_id') border-red-500 @else border-gray-300 @enderror focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="">Select a car</option>
                                 @foreach($cars as $car)
                                 <option value="{{ $car->id }}">{{ $car->name }}</option>
@@ -27,7 +27,7 @@
                         <div>
                             <label for="date" class="block text-sm font-medium text-gray-700">Date *</label>
                             <input type="date" wire:model="date" id="date"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 @error('date') border-red-300 @enderror">
+                                class="mt-1 block w-full form-input rounded-md @error('date') border-red-500 @else border-gray-300 @enderror focus:border-indigo-500 focus:ring-indigo-500">
                             @error('date') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
 
@@ -38,7 +38,7 @@
                                     <span class="text-gray-500 sm:text-sm">৳</span>
                                 </div>
                                 <input type="number" wire:model="amount" id="amount" step="0.01"
-                                    class="pl-7 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 @error('amount') border-red-300 @enderror">
+                                    class="pl-7 block w-full form-input rounded-md @error('amount') border-red-500 @else border-gray-300 @enderror focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                             @error('amount') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
@@ -46,7 +46,7 @@
                         <div>
                             <label for="source" class="block text-sm font-medium text-gray-700">Source *</label>
                             <input type="text" wire:model="source" id="source"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 @error('source') border-red-300 @enderror">
+                                class="mt-1 block w-full form-input rounded-md @error('source') border-red-500 @else border-gray-300 @enderror focus:border-indigo-500 focus:ring-indigo-500">
                             @error('source') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
 
@@ -54,7 +54,7 @@
                             <label for="description" class="block text-sm font-medium text-gray-700">Description
                                 *</label>
                             <textarea wire:model="description" id="description" rows="3"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 @error('description') border-red-300 @enderror"></textarea>
+                                class="mt-1 block w-full form-textarea rounded-md @error('description') border-red-500 @else border-gray-300 @enderror focus:border-indigo-500 focus:ring-indigo-500"></textarea>
                             @error('description') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
                     </div>

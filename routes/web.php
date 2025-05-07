@@ -14,6 +14,8 @@ use App\Livewire\Documents\{
     Company\Create as CompanyDocumentCreate,
     Company\Edit as CompanyDocumentEdit
 };
+use App\Livewire\Settings\Index as Settings;
+use App\Http\Controllers\PushSubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,7 +34,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
-    
+
     // Cars routes
     Route::get('/cars', Cars\Index::class)->name('cars.index');
     Route::get('/cars/create', Cars\Create::class)->name('cars.create');
@@ -48,19 +50,22 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/expenses/create', Expenses\Create::class)->name('expenses.create');
     Route::get('/expenses/{expense}', Expenses\Edit::class)->name('expenses.edit');
 
+    // Reports routes
+    Route::get('/reports', App\Livewire\Reports\Index::class)->name('reports.index');
+
     // Document routes
     Route::prefix('documents')->name('documents.')->group(function () {
         Route::get('/', function() {
             return redirect()->route('documents.car.index');
         })->name('index');
-        
+
         // Car Documents
         Route::prefix('car')->name('car.')->group(function () {
             Route::get('/', CarDocumentsIndex::class)->name('index');
             Route::get('/create', CarDocumentCreate::class)->name('create');
             Route::get('/{document}', CarDocumentEdit::class)->name('edit');
         });
-        
+
         // Company Documents
         Route::prefix('company')->name('company.')->group(function () {
             Route::get('/', CompanyDocumentsIndex::class)->name('index');
@@ -72,6 +77,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Push Notification Routes
+    Route::post('/push-subscription', [PushSubscriptionController::class, 'store'])->name('push-subscription.store');
+    Route::delete('/push-subscription', [PushSubscriptionController::class, 'destroy'])->name('push-subscription.destroy');
+
+    Route::get('/settings', Settings::class)->name('settings.index');
 });
+
+// Offline Route
+Route::get('/offline', function () {
+    return view('offline');
+})->name('offline');
 
 require __DIR__.'/auth.php';

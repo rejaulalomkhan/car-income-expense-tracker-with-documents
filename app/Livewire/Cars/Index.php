@@ -6,7 +6,9 @@ use Livewire\Component;
 use App\Models\Car;
 use Livewire\WithPagination;
 use Livewire\Attributes\Url;
+use Livewire\Attributes\Lazy;
 
+#[Lazy]
 class Index extends Component
 {
     use WithPagination;

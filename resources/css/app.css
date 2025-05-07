@@ -1,3 +1,104 @@
+@import 'themes.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    [type='text'],
+    [type='email'],
+    [type='url'],
+    [type='password'],
+    [type='number'],
+    [type='date'],
+    [type='datetime-local'],
+    [type='month'],
+    [type='search'],
+    [type='tel'],
+    [type='time'],
+    [type='week'],
+    [multiple],
+    textarea,
+    select {
+        @apply border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm;
+    }
+}
+
+@layer components {
+    .form-input {
+        @apply w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50;
+    }
+
+    .dark .form-input {
+        @apply border-gray-600 bg-gray-700 text-white focus:border-indigo-500;
+    }
+}
+
+/* Theme Transitions */
+.theme-transition {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Dark mode overrides */
+.dark {
+    & .bg-white {
+        @apply bg-gray-800;
+    }
+
+    & .text-gray-900 {
+        @apply text-gray-100;
+    }
+
+    & .text-gray-800 {
+        @apply text-gray-200;
+    }
+
+    & .text-gray-700 {
+        @apply text-gray-300;
+    }
+
+    & .text-gray-600 {
+        @apply text-gray-400;
+    }
+
+    & .text-gray-500 {
+        --tw-text-opacity: 1;
+        color: rgb(107 114 128 / var(--tw-text-opacity));
+    }
+
+    & .border-gray-300 {
+        @apply border-gray-600;
+    }
+
+    & .border-gray-200 {
+        @apply border-gray-700;
+    }
+
+    & .bg-gray-100 {
+        @apply bg-gray-900;
+    }
+
+    & .bg-gray-50 {
+        @apply bg-gray-800;
+    }
+
+    & .shadow {
+        --tw-shadow-color: rgba(0, 0, 0, 0.25);
+    }
+}
+
+/* PWA Install Button Animation */
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.pwa-install-animate {
+    animation: slideUp 0.3s ease-out forwards;
+}

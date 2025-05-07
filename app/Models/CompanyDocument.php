@@ -16,13 +16,15 @@ class CompanyDocument extends Model
         'expiry_date',
         'document_file',
         'description',
-        'is_active'
+        'is_active',
+        'notification_sent'
     ];
 
     protected $casts = [
         'issue_date' => 'date',
         'expiry_date' => 'date',
         'is_active' => 'boolean',
+        'notification_sent' => 'boolean'
     ];
 
     public function documentType()

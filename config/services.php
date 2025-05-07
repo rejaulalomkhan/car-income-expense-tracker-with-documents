@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'webpush' => [
+        'public_key' => env('VAPID_PUBLIC_KEY'),
+        'private_key' => env('VAPID_PRIVATE_KEY'),
+        'contact_email' => env('VAPID_CONTACT_EMAIL', env('MAIL_FROM_ADDRESS')),
+    ],
+
 ];

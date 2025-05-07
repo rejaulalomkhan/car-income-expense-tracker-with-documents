@@ -6,7 +6,9 @@ use Livewire\Component;
 use App\Models\Car;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Rule;
+use Livewire\Attributes\Lazy;
 
+#[Lazy]
 class Create extends Component
 {
     use WithFileUploads;
@@ -48,7 +50,7 @@ class Create extends Component
             $car->save();
 
             session()->flash('message', 'Car created successfully.');
-            return redirect()->route('cars.index');
+            return $this->redirect(route('cars.index'), navigate: true);
         } catch (\Exception $e) {
             session()->flash('error', 'Failed to create car. Please try again.');
             return null;
@@ -57,6 +59,6 @@ class Create extends Component
 
     public function render()
     {
-        return view('livewire.cars.create');
+        return view('livewire.cars.create')->layout('components.layouts.app');
     }
 }

@@ -26,11 +26,13 @@ class CarDocument extends Model
         'document_type',
         'document_expiry_date',
         'document_image',
-        'document_comment'
+        'document_comment',
+        'notification_sent'
     ];
 
     protected $casts = [
         'document_expiry_date' => 'date',
+        'notification_sent' => 'boolean'
     ];
 
     public function car()

@@ -1,3 +1,3 @@
 <x-app-layout>
-    <livewire:financial-dashboard />
+    <livewire:dashboard />
 </x-app-layout>

@@ -7,7 +7,9 @@ use App\Models\Car;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Rule;
+use Livewire\Attributes\Lazy;
 
+#[Lazy]
 class Edit extends Component
 {
     use WithFileUploads;
@@ -47,38 +49,34 @@ class Edit extends Component
 
     public function save()
     {
-        // Add plate_number unique rule with exception for the current car
-        $this->validate([
-            'name' => 'required|string|max:255',
-            'plate_number' => 'required|string|max:20|unique:cars,plate_number,' . $this->car->id,
-            'model' => 'nullable|string|max:255',
-            'year' => 'nullable|integer|min:1900|max:' . (date('Y') + 1),
-            'color' => 'nullable|string|max:50',
-            'new_photo' => 'nullable|image|max:1024',
-        ]);
+        try {
+            $validatedData = $this->validate();
 
-        if ($this->new_photo) {
-            if ($this->photo && Storage::disk('public')->exists($this->photo)) {
-                Storage::disk('public')->delete($this->photo);
+            $this->car->name = $this->name;
+            $this->car->plate_number = $this->plate_number;
+            $this->car->model = $this->model;
+            $this->car->year = $this->year;
+            $this->car->color = $this->color;
+
+            if ($this->new_photo) {
+                if ($this->photo) {
+                    Storage::disk('public')->delete($this->photo);
+                }
+                $this->car->photo = $this->new_photo->store('cars', 'public');
             }
-            $this->photo = $this->new_photo->store('cars', 'public');
+
+            $this->car->save();
+
+            session()->flash('message', 'Car updated successfully.');
+            return $this->redirect(route('cars.index'), navigate: true);
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to update car. Please try again.');
+            return null;
         }
-
-        $this->car->update([
-            'name' => $this->name,
-            'plate_number' => $this->plate_number,
-            'model' => $this->model,
-            'year' => $this->year,
-            'color' => $this->color,
-            'photo' => $this->photo,
-        ]);
-
-        session()->flash('message', 'Car updated successfully.');
-        return redirect()->route('cars.index');
     }
 
     public function render()
     {
-        return view('livewire.cars.edit');
+        return view('livewire.cars.edit')->layout('components.layouts.app');
     }
 }
