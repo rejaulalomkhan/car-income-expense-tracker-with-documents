@@ -144,13 +144,13 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="{{ Storage::url($document->document_image) }}" target="_blank"
+                                        class="text-indigo-600 hover:text-indigo-900 mr-3">
+                                        <i class="fas fa-file"></i> View
+                                    </a>
                                     <a href="{{ route('documents.car.edit', $document) }}"
                                         class="text-indigo-600 hover:text-indigo-900 mr-3">
                                         <i class="fas fa-edit"></i> Edit
-                                    </a>
-                                    <a href="{{ Storage::url($document->document_image) }}" target="_blank"
-                                        class="text-indigo-600 hover:text-indigo-900 mr-3">
-                                        <i class="fas fa-eye"></i> View
                                     </a>
                                     <button wire:click="delete({{ $document->id }})"
                                         wire:confirm="Are you sure you want to delete this document?"
