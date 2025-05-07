@@ -187,8 +187,41 @@ class Dashboard extends Component
 
     public function render()
     {
+        $records = Income::select('date')
+            ->whereBetween('date', [$this->startDate, $this->endDate])
+            ->union(
+                Expense::select('date')
+                    ->whereBetween('date', [$this->startDate, $this->endDate])
+            )
+            ->distinct()
+            ->orderBy('date')
+            ->get()
+            ->map(function ($record) {
+                $date = $record->date;
+                return (object) [
+                    'date' => Carbon::parse($date),
+                    'incomes' => Income::whereDate('date', $date)
+                        ->when($this->selectedCar !== 'all', function ($query) {
+                            return $query->where('car_id', $this->selectedCar);
+                        })->get(),
+                    'expenses' => Expense::whereDate('date', $date)
+                        ->when($this->selectedCar !== 'all', function ($query) {
+                            return $query->where('car_id', $this->selectedCar);
+                        })->get(),
+                    'total_income' => Income::whereDate('date', $date)
+                        ->when($this->selectedCar !== 'all', function ($query) {
+                            return $query->where('car_id', $this->selectedCar);
+                        })->sum('amount'),
+                    'total_expense' => Expense::whereDate('date', $date)
+                        ->when($this->selectedCar !== 'all', function ($query) {
+                            return $query->where('car_id', $this->selectedCar);
+                        })->sum('amount')
+                ];
+            });
+
         return view('livewire.dashboard', [
             'cars' => Car::all(),
+            'records' => $records,
             'recentIncomes' => Income::with('car')
                 ->when($this->selectedCar !== 'all', function ($query) {
                     return $query->where('car_id', $this->selectedCar);
