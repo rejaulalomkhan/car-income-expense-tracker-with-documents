@@ -298,6 +298,74 @@
                 </div>
             </div>
         </div>
+
+        <!-- Expense vs income in one table with total at bottom of table -->
+            <div class="max-w-full overflow-x-auto mt-6 mb-11">
+                <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden text-center">
+                    <thead>
+                        <tr>
+                            <th colspan="5" class="bg-green-600 text-white px-4 py-2 border border-gray-300">Income</th>
+                            <th colspan="4" class="bg-red-600 text-white px-4 py-2 border border-gray-300">Expense</th>
+                        </tr>
+                        <tr class="bg-gray-100 text-gray-700">
+                            <th class="border border-gray-300 px-4 py-2">Date</th>
+                            <th class="border border-gray-300 px-4 py-2">Car1</th>
+                            <th class="border border-gray-300 px-4 py-2">Car2</th>
+                            <th class="border border-gray-300 px-4 py-2">Car3</th>
+                            <th class="border border-gray-300 px-4 py-2">Total Income</th>
+                            <th class="border border-gray-300 px-4 py-2">Car1</th>
+                            <th class="border border-gray-300 px-4 py-2">Car2</th>
+                            <th class="border border-gray-300 px-4 py-2">Car3</th>
+                            <th class="border border-gray-300 px-4 py-2">Total Expense</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="odd:bg-white even:bg-gray-50">
+                            <td class="border border-gray-300 px-4 py-2">2024-06-01</td>
+                            <td class="border border-gray-300 px-4 py-2">100</td>
+                            <td class="border border-gray-300 px-4 py-2">150</td>
+                            <td class="border border-gray-300 px-4 py-2">120</td>
+                            <td class="border border-gray-300 px-4 py-2">370</td>
+                            <td class="border border-gray-300 px-4 py-2">50</td>
+                            <td class="border border-gray-300 px-4 py-2">60</td>
+                            <td class="border border-gray-300 px-4 py-2">55</td>
+                            <td class="border border-gray-300 px-4 py-2">165</td>
+                        </tr>
+                        <tr class="odd:bg-white even:bg-gray-50">
+                            <td class="border border-gray-300 px-4 py-2">2024-06-02</td>
+                            <td class="border border-gray-300 px-4 py-2">90</td>
+                            <td class="border border-gray-300 px-4 py-2">130</td>
+                            <td class="border border-gray-300 px-4 py-2">140</td>
+                            <td class="border border-gray-300 px-4 py-2">360</td>
+                            <td class="border border-gray-300 px-4 py-2">40</td>
+                            <td class="border border-gray-300 px-4 py-2">70</td>
+                            <td class="border border-gray-300 px-4 py-2">65</td>
+                            <td class="border border-gray-300 px-4 py-2">175</td>
+                        </tr>
+                        <tr class="odd:bg-white even:bg-gray-50">
+                            <td class="border border-gray-300 px-4 py-2">2024-06-03</td>
+                            <td class="border border-gray-300 px-4 py-2">110</td>
+                            <td class="border border-gray-300 px-4 py-2">140</td>
+                            <td class="border border-gray-300 px-4 py-2">130</td>
+                            <td class="border border-gray-300 px-4 py-2">380</td>
+                            <td class="border border-gray-300 px-4 py-2">60</td>
+                            <td class="border border-gray-300 px-4 py-2">50</td>
+                            <td class="border border-gray-300 px-4 py-2">70</td>
+                            <td class="border border-gray-300 px-4 py-2">180</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="bg-gray-200 font-semibold text-gray-900">
+                            <td colspan="4" class="border border-gray-300 px-4 py-2 text-right">Total Income:</td>
+                            <td class="border border-gray-300 px-4 py-2">1110</td>
+                            <td colspan="3" class="border border-gray-300 px-4 py-2 text-right">Total Expense:</td>
+                            <td class="border border-gray-300 px-4 py-2">520</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+
     </div>
 </div>
 
