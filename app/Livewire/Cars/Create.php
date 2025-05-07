@@ -31,24 +31,28 @@ class Create extends Component
 
     public function save()
     {
-        $this->validate();
+        try {
+            $validatedData = $this->validate();
 
-        $car = new Car();
-        $car->name = $this->name;
-        $car->plate_number = $this->plate_number;
-        $car->model = $this->model;
-        $car->year = $this->year;
-        $car->color = $this->color;
+            $car = new Car();
+            $car->name = $this->name;
+            $car->plate_number = $this->plate_number;
+            $car->model = $this->model;
+            $car->year = $this->year;
+            $car->color = $this->color;
 
-        if ($this->photo) {
-            $car->photo = $this->photo->store('cars', 'public');
+            if ($this->photo) {
+                $car->photo = $this->photo->store('cars', 'public');
+            }
+
+            $car->save();
+
+            session()->flash('message', 'Car created successfully.');
+            return redirect()->route('cars.index');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to create car. Please try again.');
+            return null;
         }
-
-        $car->save();
-
-        session()->flash('message', 'Car created successfully.');
-
-        return redirect()->route('cars.index');
     }
 
     public function render()

@@ -11,13 +11,20 @@
                         </a>
                     </div>
 
+                    @if (session()->has('error'))
+                    <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+                        role="alert">
+                        <span class="block sm:inline">{{ session('error') }}</span>
+                    </div>
+                    @endif
+
                     <form wire:submit="save" class="space-y-4">
                         <!-- Dropdowns in a single row for PC -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label for="car_id" class="block text-sm font-medium text-gray-700">Car</label>
+                                <label for="car_id" class="block text-sm font-medium text-gray-700">Car *</label>
                                 <select id="car_id" wire:model="car_id"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm @error('car_id') border-red-300 @enderror">
                                     <option value="">Select a car</option>
                                     @foreach($cars as $car)
                                     <option value="{{ $car->id }}">{{ $car->name }}</option>
@@ -28,9 +35,10 @@
 
                             <div>
                                 <label for="document_type" class="block text-sm font-medium text-gray-700">Document
-                                    Type</label>
+                                    Type *</label>
                                 <select id="document_type" wire:model="document_type"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm @error('document_type') border-red-300 @enderror">
+                                    <option value="">Select document type</option>
                                     @foreach($documentTypes as $key => $label)
                                     <option value="{{ $key }}">{{ $label }}</option>
                                     @endforeach
@@ -41,10 +49,10 @@
 
                             <div>
                                 <label for="document_expiry_date" class="block text-sm font-medium text-gray-700">Expiry
-                                    Date</label>
+                                    Date *</label>
                                 <input type="date" id="document_expiry_date" wire:model="document_expiry_date"
                                     value="{{ date('Y-m-d') }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm @error('document_expiry_date') border-red-300 @enderror">
                                 <p class="text-xs text-gray-500 mt-1">তারিখ/মাস/বছর ফরম্যাটে (
                                     <?php echo date('d/m/Y'); ?>)
                                 </p>
@@ -57,8 +65,8 @@
                         <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
                             <div>
                                 <label for="document_image" class="block text-sm font-medium text-gray-700">Document
-                                    Image</label>
-                                <input type="file" id="document_image" wire:model="document_image" class="mt-1 block w-full text-sm text-gray-500
+                                    Image *</label>
+                                <input type="file" id="document_image" wire:model="document_image" class="mt-1 block w-full text-sm text-gray-500 @error('document_image') border-red-300 @enderror
                                     file:mr-3 file:py-1.5 file:px-3
                                     file:rounded-md file:border-0
                                     file:text-xs file:font-medium
@@ -75,7 +83,7 @@
                                 <label for="document_comment"
                                     class="block text-sm font-medium text-gray-700">Comment</label>
                                 <textarea id="document_comment" wire:model="document_comment" rows="2"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm"></textarea>
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm @error('document_comment') border-red-300 @enderror"></textarea>
                                 @error('document_comment') <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                                 @enderror
                             </div>

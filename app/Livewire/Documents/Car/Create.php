@@ -21,30 +21,41 @@ class Create extends Component
     public function mount()
     {
         $this->document_type = array_key_first(CarDocument::DOCUMENT_TYPES);
+        $this->document_expiry_date = now()->format('Y-m-d');
     }
 
     public function save()
     {
-        $this->validate([
-            'car_id' => 'required|exists:cars,id',
-            'document_type' => 'required|in:' . implode(',', array_keys(CarDocument::DOCUMENT_TYPES)),
-            'document_expiry_date' => 'required|date',
-            'document_image' => 'required|file|max:10240', // 10MB max
-            'document_comment' => 'nullable|string|max:255',
-        ]);
+        try {
+            $validatedData = $this->validate([
+                'car_id' => 'required|exists:cars,id',
+                'document_type' => 'required|in:' . implode(',', array_keys(CarDocument::DOCUMENT_TYPES)),
+                'document_expiry_date' => 'required|date',
+                'document_image' => 'required|file|max:10240', // 10MB max
+                'document_comment' => 'nullable|string|max:255',
+            ]);
 
-        $filePath = $this->document_image->store('car-documents', 'public');
+            if (!$this->document_image) {
+                session()->flash('error', 'Document image is required.');
+                return null;
+            }
 
-        CarDocument::create([
-            'car_id' => $this->car_id,
-            'document_type' => $this->document_type,
-            'document_expiry_date' => $this->document_expiry_date,
-            'document_image' => $filePath,
-            'document_comment' => $this->document_comment,
-        ]);
+            $filePath = $this->document_image->store('car-documents', 'public');
 
-        session()->flash('message', 'Car document created successfully.');
-        return redirect()->route('documents.car.index');
+            CarDocument::create([
+                'car_id' => $this->car_id,
+                'document_type' => $this->document_type,
+                'document_expiry_date' => $this->document_expiry_date,
+                'document_image' => $filePath,
+                'document_comment' => $this->document_comment,
+            ]);
+
+            session()->flash('message', 'Car document created successfully.');
+            return redirect()->route('documents.car.index');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to create document. Please try again.');
+            return null;
+        }
     }
 
     public function render()
@@ -54,4 +65,4 @@ class Create extends Component
             'documentTypes' => CarDocument::DOCUMENT_TYPES,
         ]);
     }
-} 
+}

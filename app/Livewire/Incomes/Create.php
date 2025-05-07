@@ -8,11 +8,11 @@ use App\Models\Car;
 
 class Create extends Component
 {
-    public $car_id;
+    public $car_id = '';
     public $date;
     public $amount;
-    public $source;
-    public $description;
+    public $source = '';
+    public $description = '';
 
     protected function rules()
     {
@@ -32,18 +32,23 @@ class Create extends Component
 
     public function save()
     {
-        $this->validate();
+        try {
+            $validatedData = $this->validate();
 
-        Income::create([
-            'car_id' => $this->car_id,
-            'date' => $this->date,
-            'amount' => $this->amount,
-            'source' => $this->source,
-            'description' => $this->description,
-        ]);
+            Income::create([
+                'car_id' => $this->car_id,
+                'date' => $this->date,
+                'amount' => $this->amount,
+                'source' => $this->source,
+                'description' => $this->description,
+            ]);
 
-        session()->flash('message', 'Income created successfully.');
-        return redirect()->route('incomes.index');
+            session()->flash('message', 'Income created successfully.');
+            return redirect()->route('incomes.index');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to create income. Please try again.');
+            return null;
+        }
     }
 
     public function render()
