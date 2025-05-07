@@ -1,61 +1,127 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Car Expense Tracker
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern, business-friendly Laravel application to track car-related income and expenses, generate insightful reports, and manage your fleet efficiently.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚗 Project Overview
+Car Expense Tracker helps you record, analyze, and report all financial activities related to your vehicles. It supports custom branding, advanced filtering, and professional PDF report exports.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ✨ Features
+- Car management (add, edit, delete cars)
+- Record income and expenses for each car
+- Advanced reporting with filters:
+  - By car
+  - By date range (This Month, Last Month, This Year, Custom)
+  - By type (Income, Expense, All)
+- Summary cards (Total Income, Total Expense, Net Balance)
+- Grouping by car and by category
+- Export reports as PDF (with logo, title, period, and summary)
+- Custom branding (logo, favicon, PWA icon)
+- Bengali language support
+- Responsive, modern UI/UX
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🚀 Getting Started
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Prerequisites
+- PHP >= 8.1
+- Composer
+- Node.js & npm (for frontend assets)
+- MySQL or compatible database
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Installation
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/car-expense-tracker.git
+   cd car-expense-tracker
+   ```
+2. **Install dependencies:**
+   ```bash
+   composer install
+   npm install && npm run build
+   ```
+3. **Copy and configure environment:**
+   ```bash
+   cp .env.example .env
+   # Edit .env and set your DB credentials, APP_URL, etc.
+   ```
+4. **Generate application key:**
+   ```bash
+   php artisan key:generate
+   ```
+5. **Run migrations:**
+   ```bash
+   php artisan migrate
+   ```
+6. **(Optional) Seed demo data:**
+   ```bash
+   php artisan db:seed
+   ```
+7. **Start the development server:**
+   ```bash
+   php artisan serve
+   ```
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 📝 Usage
+- **Login/Register:** Access the app and set up your profile.
+- **Add Cars:** Go to the Cars section and add your vehicles.
+- **Record Transactions:** Add income or expense entries for each car.
+- **View Reports:**
+  - Go to the Reports page.
+  - Filter by car, date range, and type.
+  - View summary and detailed breakdowns.
+  - Export as PDF for sharing or printing.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+## 📊 Reporting
+- **Filters:**
+  - Car: Select a specific car or all cars.
+  - Date Range: This Month, Last Month, This Year, or custom range.
+  - Type: Income, Expense, or All Types.
+- **Summary:**
+  - Total Income, Total Expense, Net Balance.
+- **Breakdown:**
+  - Income by Car, Expense by Car, Expense by Category.
+- **PDF Export:**
+  - Includes logo, app name, period, and all summary data.
+  - Layout matches the on-screen report.
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🎨 Customization
+- **Branding:** Upload your own logo from the settings page.
+- **PWA Support:** Add to home screen for a native app feel.
+- **Language:** Bengali and English supported.
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🌏 Timezone
+- The application uses `Asia/Dhaka` timezone by default for all reports and timestamps.
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🛠️ Troubleshooting
+- If PDF export layout is broken, ensure you have the required fonts and the `barryvdh/laravel-dompdf` package installed.
+- For time issues, check your `.env` and `config/app.php` timezone settings.
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🤝 Contributing
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+---
+
+## 📬 Support
+For support, open an issue or contact the maintainer.
+
+---
+
+## 📄 License
+[MIT](LICENSE)
