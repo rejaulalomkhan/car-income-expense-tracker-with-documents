@@ -13,25 +13,78 @@ class Index extends Component
 
     public $search = '';
     public $selectedCar = '';
-    public $startDate = '';
-    public $endDate = '';
+    public $dateFilter = 'this_month';
+    public $perPage = 25;
 
     protected $queryString = [
         'search' => ['except' => ''],
         'selectedCar' => ['except' => ''],
-        'startDate' => ['except' => ''],
-        'endDate' => ['except' => ''],
+        'dateFilter' => ['except' => 'this_month'],
+        'perPage' => ['except' => 25],
     ];
 
     public function mount()
     {
-        $this->startDate = now()->startOfMonth()->format('Y-m-d');
-        $this->endDate = now()->endOfMonth()->format('Y-m-d');
+        // Default date filter is already set
+    }
+
+    public function resetFilters()
+    {
+        $this->reset(['search', 'selectedCar', 'dateFilter', 'perPage']);
+        $this->resetPage();
     }
 
     public function updatingSearch()
     {
         $this->resetPage();
+    }
+
+    public function getDateRange()
+    {
+        $now = now();
+
+        return match ($this->dateFilter) {
+            'today' => [
+                $now->startOfDay(),
+                $now->clone()->endOfDay()
+            ],
+            'this_week' => [
+                $now->startOfWeek(),
+                $now->clone()->endOfWeek()
+            ],
+            'last_week' => [
+                $now->subWeek()->startOfWeek(),
+                $now->subWeek()->endOfWeek()
+            ],
+            'this_month' => [
+                $now->startOfMonth(),
+                $now->clone()->endOfMonth()
+            ],
+            'last_month' => [
+                $now->subMonth()->startOfMonth(),
+                $now->subMonth()->endOfMonth()
+            ],
+            'last_3_months' => [
+                $now->subMonths(3)->startOfMonth(),
+                $now->clone()->endOfMonth()
+            ],
+            'this_year' => [
+                $now->startOfYear(),
+                $now->clone()->endOfYear()
+            ],
+            'last_year' => [
+                $now->subYear()->startOfYear(),
+                $now->subYear()->endOfYear()
+            ],
+            'all_time' => [
+                now()->subYears(50), // Effectively "all time"
+                now()
+            ],
+            default => [
+                $now->startOfMonth(),
+                $now->clone()->endOfMonth()
+            ]
+        };
     }
 
     public function delete(Income $income)
@@ -42,6 +95,8 @@ class Index extends Component
 
     public function render()
     {
+        [$startDate, $endDate] = $this->getDateRange();
+
         $query = Income::query()
             ->with('car')
             ->when($this->search, function ($query) {
@@ -50,17 +105,29 @@ class Index extends Component
             ->when($this->selectedCar, function ($query) {
                 $query->where('car_id', $this->selectedCar);
             })
-            ->when($this->startDate, function ($query) {
-                $query->whereDate('date', '>=', $this->startDate);
-            })
-            ->when($this->endDate, function ($query) {
-                $query->whereDate('date', '<=', $this->endDate);
-            })
+            ->whereBetween('date', [$startDate, $endDate])
             ->latest();
 
+        $totalAmount = $query->sum('amount');
+
+        $dateRangeText = match ($this->dateFilter) {
+            'today' => 'Today',
+            'this_week' => 'This Week',
+            'last_week' => 'Last Week',
+            'this_month' => 'This Month',
+            'last_month' => 'Last Month',
+            'last_3_months' => 'Last 3 Months',
+            'this_year' => 'This Year',
+            'last_year' => 'Last Year',
+            'all_time' => 'All Time',
+            default => 'This Month'
+        };
+
         return view('livewire.incomes.index', [
-            'incomes' => $query->paginate(10),
+            'incomes' => $query->paginate($this->perPage),
             'cars' => Car::all(),
+            'totalAmount' => $totalAmount,
+            'dateRangeText' => $dateRangeText
         ])->layout('components.layouts.app');
     }
-} 
+}
