@@ -29,4 +29,9 @@ class CompanyDocument extends Model
     {
         return $this->belongsTo(DocumentType::class);
     }
-} 
+
+    public function getTypeLabel()
+    {
+        return $this->documentType ? $this->documentType->name : 'Unknown';
+    }
+}

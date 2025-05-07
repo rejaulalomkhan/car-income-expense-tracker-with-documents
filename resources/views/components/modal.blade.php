@@ -14,8 +14,14 @@ $maxWidth = [
 ][$maxWidth];
 
 // Support for wire:model binding to manage modal visibility
-if ($attributes->has('wire:model')) {
-$name = $attributes->get('wire:model');
+$wireModel = null;
+if ($attributes->has('wire:model.live')) {
+$wireModel = $attributes->get('wire:model.live');
+} elseif ($attributes->has('wire:model')) {
+$wireModel = $attributes->get('wire:model');
+}
+if ($wireModel) {
+$name = $wireModel;
 }
 @endphp
 

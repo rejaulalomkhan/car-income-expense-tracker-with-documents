@@ -3,6 +3,7 @@
 namespace App\Livewire\Documents\Company;
 
 use App\Models\CompanyDocument;
+use App\Models\DocumentType;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
@@ -21,7 +22,9 @@ class Create extends Component
 
     public function mount()
     {
-        $this->document_type_id = array_key_first(CompanyDocument::DOCUMENT_TYPES);
+        $firstDocType = DocumentType::where('is_active', true)->first();
+        $this->document_type_id = $firstDocType ? $firstDocType->id : null;
+        $this->issue_date = now()->format('Y-m-d');
     }
 
     public function save()
@@ -55,7 +58,7 @@ class Create extends Component
     public function render()
     {
         return view('livewire.documents.company.create', [
-            'documentTypes' => CompanyDocument::DOCUMENT_TYPES,
+            'documentTypes' => DocumentType::where('is_active', true)->get()->pluck('name', 'id'),
         ]);
     }
-} 
+}
