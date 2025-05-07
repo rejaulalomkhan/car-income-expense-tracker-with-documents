@@ -233,6 +233,64 @@ class Dashboard extends Component
         );
     }
 
+    protected function getSummaryByCarAndDate()
+    {
+        $cars = Car::all();
+        $startDate = Carbon::parse($this->startDate);
+        $endDate = Carbon::parse($this->endDate);
+
+        $incomes = Income::whereBetween('date', [$startDate, $endDate])
+            ->get()
+            ->groupBy('car_id');
+
+        $expenses = Expense::whereBetween('date', [$startDate, $endDate])
+            ->get()
+            ->groupBy('car_id');
+
+        $summary = [];
+        foreach ($cars as $car) {
+            $carIncome = $incomes->get($car->id, collect())->sum('amount');
+            $carExpense = $expenses->get($car->id, collect())->sum('amount');
+            $summary[] = [
+                'car' => $car,
+                'income' => $carIncome,
+                'expense' => $carExpense,
+                'net' => $carIncome - $carExpense
+            ];
+        }
+
+        return [
+            'cars' => $cars,
+            'summary' => $summary,
+            'totalIncome' => $incomes->flatten()->sum('amount'),
+            'totalExpense' => $expenses->flatten()->sum('amount'),
+        ];
+    }
+
+    public function getDateRangeText()
+    {
+        switch ($this->dateFilter) {
+            case 'today':
+                return 'Today';
+            case 'yesterday':
+                return 'Yesterday';
+            case 'this_month':
+                return 'This Month';
+            case 'last_month':
+                return 'Last Month';
+            case 'this_year':
+                return 'This Year';
+            case 'last_year':
+                return 'Last Year';
+            case 'custom':
+                $start = Carbon::parse($this->startDate);
+                $end = Carbon::parse($this->endDate);
+                return $start->format('M j, Y') . ' - ' . $end->format('M j, Y');
+            default:
+                return $this->dateFilter;
+        }
+    }
+
     public function render()
     {
         $cars = Car::all();
@@ -245,10 +303,15 @@ class Dashboard extends Component
             ->take(5)
             ->get();
 
+        $summary = $this->getSummaryByCarAndDate();
+        $dateRangeText = $this->getDateRangeText();
+
         return view('livewire.dashboard', [
             'cars' => $cars,
             'recentIncomes' => $recentIncomes,
             'recentExpenses' => $recentExpenses,
+            'summary' => $summary,
+            'dateRangeText' => $dateRangeText,
         ]);
     }
 }

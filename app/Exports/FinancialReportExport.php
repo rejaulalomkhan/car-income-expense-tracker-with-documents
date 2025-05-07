@@ -2,73 +2,91 @@
 
 namespace App\Exports;
 
+use App\Models\Income;
+use App\Models\Expense;
+use App\Models\Car;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use App\Models\Income;
-use App\Models\Expense;
-use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 class FinancialReportExport implements FromCollection, WithHeadings, WithStyles
 {
     protected $startDate;
     protected $endDate;
-    protected $carId;
+    protected $type;
 
-    public function __construct($startDate, $endDate, $carId = null)
+    public function __construct($startDate, $endDate, $type = 'all')
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
-        $this->carId = $carId;
+        $this->type = $type;
     }
 
     public function collection()
     {
-        $incomes = Income::query()
-            ->whereBetween('date', [$this->startDate, $this->endDate])
-            ->when($this->carId, function ($query) {
-                return $query->where('car_id', $this->carId);
-            })
-            ->get()
-            ->map(function ($income) {
-                return [
-                    'Date' => Carbon::parse($income->date)->format('Y-m-d'),
+        $cars = Car::all();
+        $data = new Collection();
+
+        if ($this->type === 'income' || $this->type === 'all') {
+            $incomes = Income::with('car')
+                ->whereBetween('date', [$this->startDate, $this->endDate])
+                ->get()
+                ->groupBy('date');
+
+            foreach ($incomes as $date => $dayIncomes) {
+                $row = [
+                    'Date' => date('d/m/Y', strtotime($date)),
                     'Type' => 'Income',
-                    'Amount' => $income->amount,
-                    'Description' => $income->description,
-                    'Car' => $income->car->name,
                 ];
-            });
 
-        $expenses = Expense::query()
-            ->whereBetween('date', [$this->startDate, $this->endDate])
-            ->when($this->carId, function ($query) {
-                return $query->where('car_id', $this->carId);
-            })
-            ->get()
-            ->map(function ($expense) {
-                return [
-                    'Date' => Carbon::parse($expense->date)->format('Y-m-d'),
+                foreach ($cars as $car) {
+                    $amount = $dayIncomes->where('car_id', $car->id)->sum('amount');
+                    $row[$car->name] = $amount;
+                }
+
+                $row['Total'] = $dayIncomes->sum('amount');
+                $data->push($row);
+            }
+        }
+
+        if ($this->type === 'expense' || $this->type === 'all') {
+            $expenses = Expense::with('car')
+                ->whereBetween('date', [$this->startDate, $this->endDate])
+                ->get()
+                ->groupBy('date');
+
+            foreach ($expenses as $date => $dayExpenses) {
+                $row = [
+                    'Date' => date('d/m/Y', strtotime($date)),
                     'Type' => 'Expense',
-                    'Amount' => -$expense->amount,
-                    'Description' => $expense->description,
-                    'Car' => $expense->car->name,
                 ];
-            });
 
-        return $incomes->concat($expenses)->sortBy('Date');
+                foreach ($cars as $car) {
+                    $amount = $dayExpenses->where('car_id', $car->id)->sum('amount');
+                    $row[$car->name] = $amount;
+                }
+
+                $row['Total'] = $dayExpenses->sum('amount');
+                $data->push($row);
+            }
+        }
+
+        return $data;
     }
 
     public function headings(): array
     {
-        return [
-            'Date',
-            'Type',
-            'Amount',
-            'Description',
-            'Car',
-        ];
+        $cars = Car::all();
+        $headers = ['Date', 'Type'];
+
+        foreach ($cars as $car) {
+            $headers[] = $car->name;
+        }
+
+        $headers[] = 'Total';
+        return $headers;
     }
 
     public function styles(Worksheet $sheet)
@@ -77,4 +95,4 @@ class FinancialReportExport implements FromCollection, WithHeadings, WithStyles
             1 => ['font' => ['bold' => true]],
         ];
     }
-} 
+}

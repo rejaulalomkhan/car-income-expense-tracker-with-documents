@@ -7,6 +7,8 @@ use App\Models\Income;
 use App\Models\Expense;
 use Livewire\Component;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\FinancialReportExport;
 
 class FinancialDashboard extends Component
 {
@@ -101,6 +103,26 @@ class FinancialDashboard extends Component
     public function getGrandTotalExpense()
     {
         return $this->getExpenses()->flatten()->sum('amount');
+    }
+
+    public function exportIncome()
+    {
+        $incomes = $this->getIncomes();
+        $fileName = 'income-report-' . now()->format('Y-m-d') . '.xlsx';
+        return Excel::download(new FinancialReportExport($this->startDate, $this->endDate, 'income'), $fileName);
+    }
+
+    public function exportExpense()
+    {
+        $expenses = $this->getExpenses();
+        $fileName = 'expense-report-' . now()->format('Y-m-d') . '.xlsx';
+        return Excel::download(new FinancialReportExport($this->startDate, $this->endDate, 'expense'), $fileName);
+    }
+
+    public function exportFullReport()
+    {
+        $fileName = 'financial-report-' . now()->format('Y-m-d') . '.xlsx';
+        return Excel::download(new FinancialReportExport($this->startDate, $this->endDate, 'all'), $fileName);
     }
 
     public function render()
