@@ -185,7 +185,131 @@
                 </div>
             </div>
         </div>
+<!-- End of Income VS Expense Transactions -->
 
+        <div class="max-w-full overflow-x-auto mt-6 mb-11">
+            <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden text-center text-xs">
+            <thead>
+                <tr>
+                <th colspan="{{ count($cars) + 3 }}" class="bg-sky-200 text-sky-800 px-4 py-2 border border-gray-300">
+                <div class="flex justify-between items-center">
+                <a href="{{ route('incomes.create') }}" class="inline-flex items-center px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white text-[10px] sm:text-sm font-medium rounded-full transition duration-150 ease-in-out">
+                    <i class="fas fa-plus text-[8px] sm:text-xs mr-1"></i>
+                    Add Income
+                </a>
+
+                   <h3 class="text-[12px] sm:text-lg font-medium text-sky-900">Income vs Expenses</h3>
+
+                    <a href="{{ route('expenses.create') }}" class="inline-flex items-center px-2 py-1 bg-red-500 hover:bg-red-600 text-white text-[10px] sm:text-sm font-medium rounded-full transition duration-150 ease-in-out">
+                        <i class="fas fa-plus text-[8px] sm:text-xs mr-1"></i>
+                        Add Expense
+                    </a>
+                </div>
+                </th>
+                </tr>
+                <tr class="bg-gray-100 text-gray-700 ">
+                <th class="border border-gray-300 px-[2px] py-[2px]">Date</th>
+                @foreach ($cars as $car)
+                <th class="border border-gray-300 px-[2px] py-[8px]">
+                    <i class="fas fa-car mr-2 text-gray-400"></i>
+                    {{ $car->name }}
+                </th>
+                @endforeach
+                <th class="border border-gray-300 px-[2px] py-[2px]">Total</th>
+                <th class="border border-gray-300 px-[2px] py-[2px]">Net Profit/Loss</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($records as $record)
+                <tr class="odd:bg-white even:bg-gray-50">
+                <td class="border border-gray-300 px-[2px] py-[2px]">
+                    <i class="fas fa-calendar-alt mr-2 text-gray-400"></i>
+                    {{ $record->date->format('M d, Y') }}
+                </td>
+                @php
+                $totalIncome = 0;
+                $totalExpense = 0;
+                @endphp
+                @foreach ($cars as $car)
+                @php
+                $income = $record->incomes->where('car_id', $car->id)->sum('amount');
+                $expense = $record->expenses->where('car_id', $car->id)->sum('amount');
+                $totalIncome += $income;
+                $totalExpense += $expense;
+                @endphp
+                <td class="border border-gray-300 px-[2px] py-[2px]">
+                    <div class="text-green-800">
+                    <i class="fas fa-arrow-up text-[10px]"></i>
+                    ৳ {{ number_format($income) }}
+                    </div>
+                    <div class="text-red-500">
+                    <i class="fas fa-arrow-down text-[10px]"></i>
+                    ৳ {{ number_format($expense) }}
+                    </div>
+                </td>
+                @endforeach
+                <td class="border border-gray-300 px-[2px] py-[2px]">
+                    <div class="text-green-800">
+                    <i class="fas fa-arrow-up text-[10px]"></i>
+                    ৳ {{ number_format($totalIncome) }}
+                    </div>
+                    <div class="text-red-500">
+                    <i class="fas fa-arrow-down text-[10px]"></i>
+                    ৳ {{ number_format($totalExpense) }}
+                    </div>
+                </td>
+                <td
+                    class="border border-gray-300 px-[2px] py-[2px] {{ ($totalIncome - $totalExpense) >= 0 ? 'text-green-800' : 'text-red-500' }}">
+                    ৳ {{ number_format(abs($totalIncome - $totalExpense)) }}
+                    <i class="fas fa-{{ ($totalIncome - $totalExpense) >= 0 ? 'arrow-up' : 'arrow-down' }} text-[10px]"></i>
+                </td>
+                </tr>
+                @endforeach
+            </tbody>
+            <tfoot>
+                <tr class="bg-gray-200 font-semibold text-gray-900">
+                <td class="border border-gray-300 px-[2px] py-[2px] text-right">Grand Total:</td>
+                @foreach ($cars as $car)
+                @php
+                $carTotalIncome = $records->sum(fn($record) => $record->incomes->where('car_id',
+                $car->id)->sum('amount'));
+                $carTotalExpense = $records->sum(fn($record) => $record->expenses->where('car_id',
+                $car->id)->sum('amount'));
+                @endphp
+                <td class="border border-gray-300 px-[2px] py-[2px]">
+                    <div class="text-green-800">
+                    <i class="fas fa-arrow-up text-[10px]"></i>
+                    ৳ {{ number_format($carTotalIncome) }}
+                    </div>
+                    <div class="text-red-500">
+                    <i class="fas fa-arrow-down text-[10px]"></i>
+                    ৳ {{ number_format($carTotalExpense) }}
+                    </div>
+                </td>
+                @endforeach
+                @php
+                $grandTotalIncome = $records->sum('total_income');
+                $grandTotalExpense = $records->sum('total_expense');
+                @endphp
+                <td class="border border-gray-300 px-[2px] py-[2px]">
+                    <div class="text-green-800">
+                    <i class="fas fa-arrow-up text-[10px]"></i>
+                    ৳ {{ number_format($grandTotalIncome) }}
+                    </div>
+                    <div class="text-red-500">
+                    <i class="fas fa-arrow-down text-[10px]"></i>
+                    ৳ {{ number_format($grandTotalExpense) }}
+                    </div>
+                </td>
+                <td
+                    class="border border-gray-300 px-[2px] py-[2px] {{ ($grandTotalIncome - $grandTotalExpense) >= 0 ? 'text-green-800' : 'text-red-500' }}">
+                    ৳ {{ number_format(abs($grandTotalIncome - $grandTotalExpense)) }}
+                    <i class="fas fa-{{ ($grandTotalIncome - $grandTotalExpense) >= 0 ? 'arrow-up' : 'arrow-down' }} text-[10px]"></i>
+                </td>
+                </tr>
+            </tfoot>
+            </table>
+        </div>
         <!-- Chart Section -->
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
             <div class="p-6">
@@ -222,15 +346,12 @@
                                         Date</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <span class="text-green-500">Income Amount</span> <br /> <span
-                                            class="text-red-500">Expense Amount</span>
+                                        <span class="text-green-500">Income Amount</span>
                                     </th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Car</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Source</th>
+
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -243,16 +364,10 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         <i class="fas fa-arrow-up mr-2"></i>
                                         ৳ {{ number_format($income->amount) }}
-                                        <br />
-                                        <i class="fas fa-arrow-down mr-2 text-red-500"></i>
-                                        ৳ {{ number_format($income->expense_amount, 2) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         <i class="fas fa-car mr-2 text-gray-400"></i>
                                         {{ $income->car->name ?? 'N/A' }}
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <i class="fas fa-tag mr-2 text-gray-400"></i>
-                                        {{ $income->source }}
                                     </td>
                                 </tr>
                                 @endforeach
@@ -318,7 +433,7 @@
         </div>
 
         <!-- Icone VS Expense in one table with total at bottom of table -->
-        {{-- <div class="max-w-full overflow-x-auto mt-6 mb-11">
+         <div class="max-w-full overflow-x-auto mt-6 mb-11">
             <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden text-center">
                 <thead>
                     <tr>
@@ -385,169 +500,6 @@
                         <td colspan="3" class="border border-gray-300 px-[2px] py-[2px] text-right">Total Expense:</td>
                         <td class="border border-gray-300 px-[2px] py-[2px]">520</td>
                         <td class="border border-gray-300 px-[2px] py-[2px]">520</td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div> --}}
-
-        <div class="max-w-full overflow-x-auto mt-6 mb-11">
-            <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden text-center">
-                <thead>
-                    <tr>
-                        <th colspan="7" class="bg-green-600 text-white px-4 py-2 border border-gray-300">Income VS
-                            Expenses</th>
-
-                    </tr>
-                    <tr class="bg-gray-100 text-gray-700">
-                        <th class="border border-gray-300 px-[2px] py-[2px]">Date</th>
-                        @foreach ($cars as $car)
-                        <th class="border border-gray-300 px-[2px] py-[2px]">{{ $car->name }}</th>
-                        @endforeach
-                        <th class="border border-gray-300 px-[2px] py-[2px]">Total</th>
-                        <th class="border border-gray-300 px-[2px] py-[2px]">Net Profit/Loss</th>
-
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="odd:bg-white even:bg-gray-50">
-                        <td class="border border-gray-300 px-[2px] py-[2px]">2024-06-03</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">
-                            <i class="fas fa-arrow-up mr-2"></i>
-                            <span class="text-green-800">৳ {{ number_format($income->amount) }}</span>
-                            <br />
-                            <i class="fas fa-arrow-down mr-2 text-red-500"></i>
-                            <span class="text-red-500">৳ {{ number_format($expense->amount) }}</span>
-                        </td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">140</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">130</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">380</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">60</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">180</td>
-                    </tr>
-                    <tr class="odd:bg-white even:bg-gray-50">
-                        <td class="border border-gray-300 px-[2px] py-[2px]">2024-06-03</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">110</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">140</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">130</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">380</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">60</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">180</td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr class="bg-gray-200 font-semibold text-gray-900">
-                        <td colspan="5" class="border border-gray-300 px-[2px] py-[2px] text-right">Total:</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">1110</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">520</td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-        <!-- End of Income VS Expense Transactions -->
-
-        <div class="max-w-full overflow-x-auto mt-6 mb-11">
-            <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden text-center">
-                <thead>
-                    <tr>
-                        <th colspan="{{ count($cars) + 3 }}"
-                            class="bg-green-600 text-white px-4 py-2 border border-gray-300">
-                            Income VS Expenses</th>
-                    </tr>
-                    <tr class="bg-gray-100 text-gray-700">
-                        <th class="border border-gray-300 px-2 py-2">Date</th>
-                        @foreach ($cars as $car)
-                        <th class="border border-gray-300 px-2 py-2">{{ $car->name }}</th>
-                        @endforeach
-                        <th class="border border-gray-300 px-2 py-2">Total</th>
-                        <th class="border border-gray-300 px-2 py-2">Net Profit/Loss</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($records as $record)
-                    <tr class="odd:bg-white even:bg-gray-50">
-                        <td class="border border-gray-300 px-2 py-2">{{ $record->date->format('M d, Y') }}</td>
-                        @php
-                        $totalIncome = 0;
-                        $totalExpense = 0;
-                        @endphp
-                        @foreach ($cars as $car)
-                        @php
-                        $income = $record->incomes->where('car_id', $car->id)->sum('amount');
-                        $expense = $record->expenses->where('car_id', $car->id)->sum('amount');
-                        $totalIncome += $income;
-                        $totalExpense += $expense;
-                        @endphp
-                        <td class="border border-gray-300 px-2 py-2">
-                            <div class="text-green-800">
-                                <i class="fas fa-arrow-up text-xs"></i>
-                                ৳ {{ number_format($income) }}
-                            </div>
-                            <div class="text-red-500">
-                                <i class="fas fa-arrow-down text-xs"></i>
-                                ৳ {{ number_format($expense) }}
-                            </div>
-                        </td>
-                        @endforeach
-                        <td class="border border-gray-300 px-2 py-2">
-                            <div class="text-green-800">
-                                <i class="fas fa-arrow-up text-xs"></i>
-                                ৳ {{ number_format($totalIncome) }}
-                            </div>
-                            <div class="text-red-500">
-                                <i class="fas fa-arrow-down text-xs"></i>
-                                ৳ {{ number_format($totalExpense) }}
-                            </div>
-                        </td>
-                        <td
-                            class="border border-gray-300 px-2 py-2 {{ ($totalIncome - $totalExpense) >= 0 ? 'text-green-800' : 'text-red-500' }}">
-                            ৳ {{ number_format(abs($totalIncome - $totalExpense)) }}
-                            <i
-                                class="fas fa-{{ ($totalIncome - $totalExpense) >= 0 ? 'arrow-up' : 'arrow-down' }} text-xs"></i>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-                <tfoot>
-                    <tr class="bg-gray-200 font-semibold text-gray-900">
-                        <td class="border border-gray-300 px-4 py-2 text-right">Grand Total:</td>
-                        @foreach ($cars as $car)
-                        @php
-                        $carTotalIncome = $records->sum(fn($record) => $record->incomes->where('car_id',
-                        $car->id)->sum('amount'));
-                        $carTotalExpense = $records->sum(fn($record) => $record->expenses->where('car_id',
-                        $car->id)->sum('amount'));
-                        @endphp
-                        <td class="border border-gray-300 px-2 py-2">
-                            <div class="text-green-800">
-                                <i class="fas fa-arrow-up text-xs"></i>
-                                ৳ {{ number_format($carTotalIncome) }}
-                            </div>
-                            <div class="text-red-500">
-                                <i class="fas fa-arrow-down text-xs"></i>
-                                ৳ {{ number_format($carTotalExpense) }}
-                            </div>
-                        </td>
-                        @endforeach
-                        @php
-                        $grandTotalIncome = $records->sum('total_income');
-                        $grandTotalExpense = $records->sum('total_expense');
-                        @endphp
-                        <td class="border border-gray-300 px-2 py-2">
-                            <div class="text-green-800">
-                                <i class="fas fa-arrow-up text-xs"></i>
-                                ৳ {{ number_format($grandTotalIncome) }}
-                            </div>
-                            <div class="text-red-500">
-                                <i class="fas fa-arrow-down text-xs"></i>
-                                ৳ {{ number_format($grandTotalExpense) }}
-                            </div>
-                        </td>
-                        <td
-                            class="border border-gray-300 px-2 py-2 {{ ($grandTotalIncome - $grandTotalExpense) >= 0 ? 'text-green-800' : 'text-red-500' }}">
-                            ৳ {{ number_format(abs($grandTotalIncome - $grandTotalExpense)) }}
-                            <i
-                                class="fas fa-{{ ($grandTotalIncome - $grandTotalExpense) >= 0 ? 'arrow-up' : 'arrow-down' }} text-xs"></i>
-                        </td>
                     </tr>
                 </tfoot>
             </table>
