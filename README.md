@@ -36,7 +36,7 @@ Car Expense Tracker helps you record, analyze, and report all financial activiti
 ### Installation
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/car-expense-tracker.git
+   git clone https://github.com/rejaulalomkhan/car-expense-tracker.git
    cd car-expense-tracker
    ```
 2. **Install dependencies:**
