@@ -6,9 +6,7 @@ use Livewire\Component;
 use App\Models\Car;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Rule;
-use Livewire\Attributes\Lazy;
 
-#[Lazy]
 class Create extends Component
 {
     use WithFileUploads;
