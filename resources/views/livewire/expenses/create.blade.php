@@ -27,6 +27,7 @@
                         <div>
                             <label for="date" class="block text-sm font-medium text-gray-700">Date *</label>
                             <input type="date" id="date" wire:model="date"
+                                placeholder="Select date"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 @error('date') border-red-300 @enderror">
                             @error('date') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
@@ -38,6 +39,7 @@
                                     <span class="text-gray-500 sm:text-sm">৳</span>
                                 </div>
                                 <input type="number" id="amount" wire:model="amount" step="0.01"
+                                    placeholder="Enter amount (e.g., 1000)"
                                     class="pl-7 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 @error('amount') border-red-300 @enderror">
                             </div>
                             @error('amount') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
@@ -59,6 +61,7 @@
                             <label for="description" class="block text-sm font-medium text-gray-700">Description
                                 *</label>
                             <textarea id="description" wire:model="description" rows="3"
+                                placeholder="Enter expense description (e.g., Regular maintenance service)"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 @error('description') border-red-300 @enderror"></textarea>
                             @error('description') <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                             @enderror

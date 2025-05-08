@@ -27,6 +27,7 @@
                         <div>
                             <label for="date" class="block text-sm font-medium text-gray-700">Date *</label>
                             <input type="date" wire:model="date" id="date"
+                                placeholder="Select date"
                                 class="mt-1 block w-full form-input rounded-md @error('date') border-red-500 @else border-gray-300 @enderror focus:border-indigo-500 focus:ring-indigo-500">
                             @error('date') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
@@ -38,6 +39,7 @@
                                     <span class="text-gray-500 sm:text-sm">৳</span>
                                 </div>
                                 <input type="number" wire:model="amount" id="amount" step="0.01"
+                                    placeholder="Enter amount (e.g., 5000)"
                                     class="pl-7 block w-full form-input rounded-md @error('amount') border-red-500 @else border-gray-300 @enderror focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                             @error('amount') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
@@ -46,6 +48,7 @@
                         <div>
                             <label for="source" class="block text-sm font-medium text-gray-700">Source *</label>
                             <input type="text" wire:model="source" id="source"
+                                placeholder="Enter income source (e.g., Rental, Service)"
                                 class="mt-1 block w-full form-input rounded-md @error('source') border-red-500 @else border-gray-300 @enderror focus:border-indigo-500 focus:ring-indigo-500">
                             @error('source') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
@@ -54,6 +57,7 @@
                             <label for="description" class="block text-sm font-medium text-gray-700">Description
                                 *</label>
                             <textarea wire:model="description" id="description" rows="3"
+                                placeholder="Enter income description (e.g., Monthly rental income from car)"
                                 class="mt-1 block w-full form-textarea rounded-md @error('description') border-red-500 @else border-gray-300 @enderror focus:border-indigo-500 focus:ring-indigo-500"></textarea>
                             @error('description') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
