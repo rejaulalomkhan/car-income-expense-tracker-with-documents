@@ -22,6 +22,7 @@ class Dashboard extends Component
     public $stats = [];
     public $chartData = [];
     public $records = [];
+    public $percentageChanges = [];
 
     protected $queryString = ['dateFilter', 'startDate', 'endDate', 'selectedCar'];
 
@@ -35,6 +36,42 @@ class Dashboard extends Component
     public function mount()
     {
         $this->updateStats();
+        $this->calculatePercentageChanges();
+    }
+
+    protected function calculatePercentageChanges()
+    {
+        $now = Carbon::now();
+        $previousStartDate = Carbon::parse($this->startDate)->subDays($now->diffInDays(Carbon::parse($this->startDate)));
+        $previousEndDate = Carbon::parse($this->endDate)->subDays($now->diffInDays(Carbon::parse($this->endDate)));
+
+        // Calculate previous period's totals
+        $previousIncomeQuery = Income::query()
+            ->whereBetween('date', [$previousStartDate, $previousEndDate]);
+        $previousExpenseQuery = Expense::query()
+            ->whereBetween('date', [$previousStartDate, $previousEndDate]);
+
+        if ($this->selectedCar !== 'all') {
+            $previousIncomeQuery->where('car_id', $this->selectedCar);
+            $previousExpenseQuery->where('car_id', $this->selectedCar);
+        }
+
+        $previousTotalIncome = $previousIncomeQuery->sum('amount');
+        $previousTotalExpense = $previousExpenseQuery->sum('amount');
+        $previousNetIncome = $previousTotalIncome - $previousTotalExpense;
+        $previousProfitMargin = $previousTotalIncome > 0 ? ($previousNetIncome / $previousTotalIncome) * 100 : 0;
+
+        // Calculate percentage changes
+        $this->percentageChanges = [
+            'income' => $previousTotalIncome > 0 ? 
+                (($this->stats['total_income'] - $previousTotalIncome) / $previousTotalIncome) * 100 : 0,
+            'expense' => $previousTotalExpense > 0 ? 
+                (($this->stats['total_expense'] - $previousTotalExpense) / $previousTotalExpense) * 100 : 0,
+            'net_income' => $previousNetIncome != 0 ? 
+                (($this->stats['net_income'] - $previousNetIncome) / abs($previousNetIncome)) * 100 : 0,
+            'profit_margin' => $previousProfitMargin != 0 ? 
+                (($this->stats['profit_margin'] - $previousProfitMargin) / abs($previousProfitMargin)) * 100 : 0,
+        ];
     }
 
     public function updatedDateFilter($value)
@@ -69,6 +106,7 @@ class Dashboard extends Component
         }
 
         $this->updateStats();
+        $this->calculatePercentageChanges();
         $this->dispatch('dateRangeUpdated', [
             'startDate' => $this->startDate,
             'endDate' => $this->endDate
@@ -92,42 +130,50 @@ class Dashboard extends Component
 
     public function updateStats()
     {
-        // Calculate total income
-        $incomeQuery = Income::query()
-            ->whereBetween('date', [$this->startDate, $this->endDate]);
+        try {
+            // Calculate total income
+            $incomeQuery = Income::query()
+                ->whereBetween('date', [$this->startDate, $this->endDate]);
 
-        if ($this->selectedCar !== 'all') {
-            $incomeQuery->where('car_id', $this->selectedCar);
+            if ($this->selectedCar !== 'all') {
+                $incomeQuery->where('car_id', $this->selectedCar);
+            }
+
+            $totalIncome = $incomeQuery->sum('amount');
+
+            // Calculate total expenses
+            $expenseQuery = Expense::query()
+                ->whereBetween('date', [$this->startDate, $this->endDate]);
+
+            if ($this->selectedCar !== 'all') {
+                $expenseQuery->where('car_id', $this->selectedCar);
+            }
+
+            $totalExpense = $expenseQuery->sum('amount');
+            $netIncome = $totalIncome - $totalExpense;
+
+            $this->stats = [
+                'total_income' => $totalIncome,
+                'total_expense' => $totalExpense,
+                'net_income' => $netIncome,
+                'profit_margin' => $totalIncome > 0 ? ($netIncome / $totalIncome) * 100 : 0,
+            ];
+
+            // Update chart data
+            $this->generateChartData();
+
+            // Get records for the table
+            $this->getRecords();
+
+            // Emit chart data updated event with validation
+            if (!empty($this->chartData['labels']) && !empty($this->chartData['income']) && !empty($this->chartData['expense'])) {
+                $this->dispatch('chartDataUpdated', $this->chartData);
+            } else {
+                $this->dispatch('error', 'No data available for the selected period');
+            }
+        } catch (\Exception $e) {
+            $this->dispatch('error', 'Error updating stats: ' . $e->getMessage());
         }
-
-        $totalIncome = $incomeQuery->sum('amount');
-
-        // Calculate total expenses
-        $expenseQuery = Expense::query()
-            ->whereBetween('date', [$this->startDate, $this->endDate]);
-
-        if ($this->selectedCar !== 'all') {
-            $expenseQuery->where('car_id', $this->selectedCar);
-        }
-
-        $totalExpense = $expenseQuery->sum('amount');
-        $netIncome = $totalIncome - $totalExpense;
-
-        $this->stats = [
-            'total_income' => $totalIncome,
-            'total_expense' => $totalExpense,
-            'net_income' => $netIncome,
-            'profit_margin' => $totalIncome > 0 ? ($netIncome / $totalIncome) * 100 : 0,
-        ];
-
-        // Update chart data
-        $this->generateChartData();
-
-        // Get records for the table
-        $this->getRecords();
-
-        // Emit chart data updated event
-        $this->dispatch('chartDataUpdated', $this->chartData);
     }
 
     protected function generateChartData()
@@ -312,6 +358,10 @@ class Dashboard extends Component
             'recentExpenses' => $recentExpenses,
             'summary' => $summary,
             'dateRangeText' => $dateRangeText,
+            'stats' => $this->stats,
+            'percentageChanges' => $this->percentageChanges,
+            'records' => $this->records,
+            'chartData' => $this->chartData,
         ]);
     }
 }

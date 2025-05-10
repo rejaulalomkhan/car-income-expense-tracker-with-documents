@@ -102,10 +102,10 @@
                     <div class="flex-1">
                         <p class="text-sm text-gray-500 mb-1">Total Income</p>
                         <div class="flex items-center justify-between">
-                            <span class="text-lg font-semibold text-gray-900">৳ {{
-                                number_format($stats['total_income'],
-                                2) }}</span>
-                            <span class="text-xs px-1.5 py-0.5 rounded-full bg-green-100 text-green-800">+12.5%</span>
+                            <div class="text-2xl font-bold text-gray-900">${{ number_format($stats['total_income'], 2) }}</div>
+                            <span class="text-xs px-1.5 py-0.5 rounded-full {{ $percentageChanges['income'] >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                {{ $percentageChanges['income'] >= 0 ? '+' : '' }}{{ number_format($percentageChanges['income'], 1) }}%
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -122,10 +122,10 @@
                     <div class="flex-1">
                         <p class="text-sm text-gray-500 mb-1">Total Expenses</p>
                         <div class="flex items-center justify-between">
-                            <span class="text-lg font-semibold text-gray-900">৳ {{
-                                number_format($stats['total_expense'],
-                                2) }}</span>
-                            <span class="text-xs px-1.5 py-0.5 rounded-full bg-red-100 text-red-800">-8.4%</span>
+                            <div class="text-2xl font-bold text-gray-900">${{ number_format($stats['total_expense'], 2) }}</div>
+                            <span class="text-xs px-1.5 py-0.5 rounded-full {{ $percentageChanges['expense'] >= 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
+                                {{ $percentageChanges['expense'] >= 0 ? '+' : '' }}{{ number_format($percentageChanges['expense'], 1) }}%
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -145,13 +145,9 @@
                     <div class="flex-1">
                         <p class="text-sm text-gray-500 mb-1">Net Income</p>
                         <div class="flex items-center justify-between">
-                            <span
-                                class="text-lg font-semibold {{ $stats['net_income'] >= 0 ? 'text-gray-900' : 'text-orange-600' }}">
-                                ৳ {{ number_format(abs($stats['net_income']), 2) }}
-                            </span>
-                            <span
-                                class="text-xs px-1.5 py-0.5 rounded-full {{ $stats['net_income'] >= 0 ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800' }}">
-                                {{ $stats['net_income'] >= 0 ? '+' : '-' }}4.1%
+                            <div class="text-2xl font-bold text-gray-900">${{ number_format($stats['net_income'], 2) }}</div>
+                            <span class="text-xs px-1.5 py-0.5 rounded-full {{ $percentageChanges['net_income'] >= 0 ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800' }}">
+                                {{ $percentageChanges['net_income'] >= 0 ? '+' : '' }}{{ number_format($percentageChanges['net_income'], 1) }}%
                             </span>
                         </div>
                     </div>
@@ -172,13 +168,9 @@
                     <div class="flex-1">
                         <p class="text-sm text-gray-500 mb-1">Profit Margin</p>
                         <div class="flex items-center justify-between">
-                            <span
-                                class="text-lg font-semibold {{ $stats['profit_margin'] >= 0 ? 'text-gray-900' : 'text-pink-600' }}">
-                                {{ number_format(abs($stats['profit_margin']), 2) }}%
-                            </span>
-                            <span
-                                class="text-xs px-1.5 py-0.5 rounded-full {{ $stats['profit_margin'] >= 0 ? 'bg-indigo-100 text-indigo-800' : 'bg-pink-100 text-pink-800' }}">
-                                {{ $stats['profit_margin'] >= 0 ? '+' : '-' }}2.3%
+                            <div class="text-2xl font-bold text-gray-900">{{ number_format($stats['profit_margin'], 1) }}%</div>
+                            <span class="text-xs px-1.5 py-0.5 rounded-full {{ $percentageChanges['profit_margin'] >= 0 ? 'bg-indigo-100 text-indigo-800' : 'bg-pink-100 text-pink-800' }}">
+                                {{ $percentageChanges['profit_margin'] >= 0 ? '+' : '' }}{{ number_format($percentageChanges['profit_margin'], 1) }}%
                             </span>
                         </div>
                     </div>
@@ -200,7 +192,7 @@
                                     Add Income
                                 </a>
 
-                                <h3 class="text-[12px] sm:text-lg font-medium text-sky-900">Income vs Expenses</h3>
+                                <h3 class="text-[12px] sm:text-lg font-medium text-sky-900">Income vs Expenses of {{ $dateRangeText }}</h3>
 
                                 <a href="{{ route('expenses.create') }}"
                                     class="inline-flex items-center px-2 py-1 bg-red-500 hover:bg-red-600 text-white text-[10px] sm:text-sm font-medium rounded-full transition duration-150 ease-in-out">
@@ -434,10 +426,14 @@
             <div class="p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-medium text-gray-900">Income vs Expenses</h3>
-                    <button wire:click="exportReport"
-                        class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">
-                        <i class="fas fa-download mr-2"></i> Export Report
-                    </button>
+                    <div class="flex space-x-2">
+                        <button wire:click="updateStats" class="inline-flex items-center px-3 py-2 bg-gray-100 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-200 active:bg-gray-300 focus:outline-none focus:border-gray-300 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+                            <i class="fas fa-sync-alt mr-2"></i> Reload Chart
+                        </button>
+                        <button wire:click="exportReport" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">
+                            <i class="fas fa-download mr-2"></i> Export Report
+                        </button>
+                    </div>
                 </div>
                 <div class="h-96">
                     <canvas id="incomeExpenseChart"></canvas>
@@ -639,83 +635,40 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     document.addEventListener('livewire:initialized', function () {
-        let dateRangePicker, dateRangePickerMobile;
-
-        // Initialize date pickers with common configuration
-        function initializeDatePickers() {
-            const commonConfig = {
-                mode: "range",
-                dateFormat: "Y-m-d",
-                defaultDate: [
-                    @this.startDate || new Date().toISOString().split('T')[0],
-                    @this.endDate || new Date().toISOString().split('T')[0]
-                ],
-                disableMobile: "true",
-                onChange: function(selectedDates, dateStr, instance) {
-                    if (selectedDates.length === 2) {
-                        updateDateRange(selectedDates, instance.element.id === 'date-range' ? 'desktop' : 'mobile');
-                    }
+        // Initialize date range pickers
+        const dateRangePicker = flatpickr("#date-range", {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            defaultDate: ["{{ $startDate }}", "{{ $endDate }}"],
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length === 2) {
+                    @this.set('startDate', selectedDates[0].toISOString().split('T')[0]);
+                    @this.set('endDate', selectedDates[1].toISOString().split('T')[0]);
+                    @this.set('dateFilter', 'custom');
                 }
-            };
-
-            dateRangePicker = flatpickr("#date-range", commonConfig);
-            dateRangePickerMobile = flatpickr("#date-range-mobile", commonConfig);
-        }
-
-        // Function to update date range and sync UI
-        function updateDateRange(selectedDates, device) {
-            const startDate = selectedDates[0].toISOString().split('T')[0];
-            const endDate = selectedDates[1].toISOString().split('T')[0];
-
-            // Update hidden inputs which are bound to Livewire
-            @this.$set('startDate', startDate);
-            @this.$set('endDate', endDate);
-            @this.$set('dateFilter', 'custom');
-
-            // Update filter dropdowns to show 'custom'
-            document.getElementById('date-filter').value = 'custom';
-            document.getElementById('date-filter-mobile').value = 'custom';
-
-            // Update period displays
-            updatePeriodDisplay(startDate, endDate);
-        }
-
-        // Function to update period display text
-        function updatePeriodDisplay(startDate, endDate) {
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-            const startMonth = start.toLocaleString('default', { month: 'long', year: 'numeric' });
-            const endMonth = end.toLocaleString('default', { month: 'long', year: 'numeric' });
-            const periodText = startMonth === endMonth ? startMonth : `${startMonth} - ${endMonth}`;
-
-            document.getElementById('selected-period').textContent = periodText;
-            document.getElementById('selected-period-mobile').textContent = periodText;
-        }
-
-        // Initialize date pickers
-        initializeDatePickers();
-
-        // Listen for changes in the quick filter dropdowns
-        ['date-filter', 'date-filter-mobile'].forEach(id => {
-            document.getElementById(id).addEventListener('change', function(e) {
-                if (e.target.value !== 'custom') {
-                    // Let Livewire handle the date calculations
-                    @this.$set('dateFilter', e.target.value);
-                }
-            });
+            }
         });
 
-        // Listen for Livewire events to update the date picker
-        Livewire.on('dateRangeUpdated', ({ startDate, endDate }) => {
-            // Update both date pickers
-            dateRangePicker.setDate([startDate, endDate]);
-            dateRangePickerMobile.setDate([startDate, endDate]);
-
-            // Update the period display
-            updatePeriodDisplay(startDate, endDate);
+        const dateRangePickerMobile = flatpickr("#date-range-mobile", {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            defaultDate: ["{{ $startDate }}", "{{ $endDate }}"],
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length === 2) {
+                    @this.set('startDate', selectedDates[0].toISOString().split('T')[0]);
+                    @this.set('endDate', selectedDates[1].toISOString().split('T')[0]);
+                    @this.set('dateFilter', 'custom');
+                }
+            }
         });
 
-        // Initialize Chart.js
+        // Listen for Livewire events to update the date pickers
+        Livewire.on('dateRangeUpdated', (data) => {
+            dateRangePicker.setDate([data.startDate, data.endDate]);
+            dateRangePickerMobile.setDate([data.startDate, data.endDate]);
+        });
+
+        // Initialize Chart.js with enhanced configuration
         const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
         let chart = new Chart(ctx, {
             type: 'line',
@@ -727,7 +680,13 @@
                         data: @json($chartData['income']),
                         borderColor: 'rgb(34, 197, 94)',
                         backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                        tension: 0.1,
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgb(34, 197, 94)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.4,
                         fill: true
                     },
                     {
@@ -735,7 +694,13 @@
                         data: @json($chartData['expense']),
                         borderColor: 'rgb(239, 68, 68)',
                         backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        tension: 0.1,
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgb(239, 68, 68)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.4,
                         fill: true
                     }
                 ]
@@ -743,37 +708,138 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
                 plugins: {
                     legend: {
                         position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        }
                     },
                     tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        titleFont: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 13
+                        },
                         callbacks: {
                             label: function(context) {
-                                return context.dataset.label + ': ৳ ' + context.parsed.y.toFixed(2);
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += '৳ ' + context.parsed.y.toLocaleString('en-US', {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    });
+                                }
+                                return label;
+                            },
+                            title: function(context) {
+                                return context[0].label;
                             }
                         }
                     }
                 },
                 scales: {
+                    x: {
+                        grid: {
+                            display: true,
+                            color: 'rgba(0, 0, 0, 0.05)',
+                            drawBorder: false,
+                            drawTicks: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            },
+                            maxRotation: 45,
+                            minRotation: 45,
+                            padding: 10
+                        },
+                        border: {
+                            display: false
+                        }
+                    },
                     y: {
                         beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)',
+                            drawBorder: false,
+                            drawTicks: false,
+                            borderDash: [5, 5]
+                        },
                         ticks: {
+                            font: {
+                                size: 11
+                            },
+                            padding: 10,
                             callback: function(value) {
-                                return '৳ ' + value.toFixed(2);
+                                return '৳ ' + value.toLocaleString('en-US', {
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                });
                             }
+                        },
+                        border: {
+                            display: false
                         }
                     }
+                },
+                animation: {
+                    duration: 750,
+                    easing: 'easeInOutQuart'
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
                 }
             }
         });
 
         // Update chart when data changes
         Livewire.on('chartDataUpdated', (data) => {
+            if (!data || !data.labels || !data.income || !data.expense) {
+                console.warn('Invalid chart data received');
+                return;
+            }
+
+            // Clear existing data
+            chart.data.labels = [];
+            chart.data.datasets[0].data = [];
+            chart.data.datasets[1].data = [];
+
+            // Update with new data
             chart.data.labels = data.labels;
             chart.data.datasets[0].data = data.income;
             chart.data.datasets[1].data = data.expense;
-            chart.update();
+
+            // Force chart update
+            chart.update('none');
+        });
+
+        // Add loading state handling
+        Livewire.on('loading', () => {
+            // You could add a loading overlay here if needed
+            console.log('Loading...');
+        });
+
+        // Add error handling
+        Livewire.on('error', (error) => {
+            console.error('Chart error:', error);
         });
     });
 </script>

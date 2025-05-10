@@ -71,10 +71,10 @@
             <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center">
                     <div class="text-sm text-gray-500">
-                        &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
+                        &copy; {{ date('Y') }} {{ config('app.name') }}.
                     </div>
                     <div class="text-sm text-gray-500">
-                        Developed by <a href="https://github.com/armanazij" target="_blank"
+                        Developed by <a href="https://fb.com/armanaazij" target="_blank"
                             class="text-indigo-600 hover:text-indigo-800">Arman Azij</a>
                     </div>
                 </div>
