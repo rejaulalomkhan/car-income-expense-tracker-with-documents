@@ -308,118 +308,109 @@
             </table>
         </div>
 
-        <!-- Car-wise Summary Section -->
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-            <div class="p-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Summary for {{ $dateRangeText }}</h3>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <div class="flex items-center">
-                                        <i class="fas fa-car mr-2"></i>
-                                        Car
-                                    </div>
-                                </th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <div class="flex items-center">
-                                        <i class="fas fa-arrow-up text-green-500 mr-2"></i>
-                                        Income
-                                    </div>
-                                </th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <div class="flex items-center">
-                                        <i class="fas fa-arrow-down text-red-500 mr-2"></i>
-                                        Expenses
-                                    </div>
-                                </th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <div class="flex items-center">
-                                        <i class="fas fa-chart-line mr-2"></i>
-                                        Net
-                                    </div>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach($summary['summary'] as $carSummary)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-2 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        @if($carSummary['car']->photo)
-                                        <div class="flex-shrink-0 h-8 w-8 mr-3">
-                                            <img class="h-8 w-8 rounded-full object-cover"
-                                                src="{{ asset('storage/' . $carSummary['car']->photo) }}"
-                                                alt="{{ $carSummary['car']->name }}">
-                                        </div>
-                                        @else
-                                        <div
-                                            class="flex-shrink-0 h-8 w-8 mr-3 bg-gray-200 rounded-full flex items-center justify-center">
-                                            <i class="fas fa-car text-gray-500"></i>
-                                        </div>
-                                        @endif
-                                        <div>
-                                            <div class="text-sm font-medium text-gray-900">{{ $carSummary['car']->name
-                                                }}</div>
-                                            <div class="text-xs text-gray-500">{{ $carSummary['car']->plate_number }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-2 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-green-600">
-                                        ৳ {{ number_format($carSummary['income'], 2) }}
-                                    </div>
-                                </td>
-                                <td class="px-6 py-2 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-red-600">
-                                        ৳ {{ number_format($carSummary['expense'], 2) }}
-                                    </div>
-                                </td>
-                                <td class="px-6 py-2 whitespace-nowrap">
-                                    <div
-                                        class="text-sm font-medium {{ $carSummary['net'] >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                                        ৳ {{ number_format(abs($carSummary['net']), 2) }}
-                                        <i
-                                            class="fas fa-{{ $carSummary['net'] >= 0 ? 'arrow-up' : 'arrow-down' }} ml-1"></i>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                        <tfoot class="bg-gray-50">
-                            <tr>
-                                <td class="px-6 py-2 whitespace-nowrap font-medium text-gray-700">Total</td>
-                                <td class="px-6 py-2 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-green-600">
-                                        ৳ {{ number_format($summary['totalIncome'], 2) }}
-                                    </div>
-                                </td>
-                                <td class="px-6 py-2 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-red-600">
-                                        ৳ {{ number_format($summary['totalExpense'], 2) }}
-                                    </div>
-                                </td>
-                                <td class="px-6 py-2 whitespace-nowrap">
-                                    <div
-                                        class="text-sm font-medium {{ ($summary['totalIncome'] - $summary['totalExpense']) >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                                        ৳ {{ number_format(abs($summary['totalIncome'] - $summary['totalExpense']), 2)
-                                        }}
-                                        <i
-                                            class="fas fa-{{ ($summary['totalIncome'] - $summary['totalExpense']) >= 0 ? 'arrow-up' : 'arrow-down' }} ml-1"></i>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
+       
+        
+    <!-- Separated income VS Expense in one table with total at bottom of table -->
+    <div class="max-w-full overflow-x-auto mt-6 mb-11">
+            <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden text-center text-xs">
+                <thead>
+                    <tr>
+                        <th colspan="{{ count($cars) + 2 }}" class="bg-green-600 text-white px-4 py-2 border border-gray-300 text-sm">Income</th>
+                        <th colspan="{{ count($cars) + 2 }}" class="bg-red-600 text-white px-4 py-2 border border-gray-300 text-sm">Expense</th>
+                        <th class="bg-gray-600 text-white px-4 py-2 border border-gray-300 text-sm">Net</th>
+                    </tr>
+                    <tr class="bg-gray-100 text-gray-700">
+                        <th class="border border-gray-300 px-[2px] py-[2px] text-xs">Date</th>
+                        @foreach ($cars as $car)
+                        <th class="border border-gray-300 px-[2px] py-[2px] text-xs">
+                            <i class="fas fa-car mr-2 text-gray-400"></i>
+                            {{ $car->name }}
+                        </th>
+                        @endforeach
+                        <th class="border border-gray-300 px-[2px] py-[2px] text-xs">Total Income</th>
+                        <th class="border border-gray-300 px-[2px] py-[2px] text-xs">Date</th>
+                        @foreach ($cars as $car)
+                        <th class="border border-gray-300 px-[2px] py-[2px] text-xs">
+                            <i class="fas fa-car mr-2 text-gray-400"></i>
+                            {{ $car->name }}
+                        </th>
+                        @endforeach
+                        <th class="border border-gray-300 px-[2px] py-[2px] text-xs">Total Expense</th>
+                        <th class="border border-gray-300 px-[2px] py-[2px] text-xs">Profit/Loss</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($records as $record)
+                    <tr class="odd:bg-white even:bg-gray-50">
+                        <!-- Income Section -->
+                        <td class="border border-gray-300 px-[2px] py-[2px] text-left text-xs">
+                            <i class="fas fa-calendar-alt mr-2 text-gray-400"></i>
+                            {{ $record->date->format('M d, Y') }}
+                        </td>
+                        @php
+                        $totalIncome = 0;
+                        @endphp
+                        @foreach ($cars as $car)
+                        @php
+                        $income = $record->incomes->where('car_id', $car->id)->sum('amount');
+                        $totalIncome += $income;
+                        @endphp
+                        <td class="border border-gray-300 px-[2px] py-[2px] text-green-600 text-xs">
+                            ৳ {{ number_format($income) }}
+                        </td>
+                        @endforeach
+                        <td class="border border-gray-300 px-[2px] py-[2px] font-semibold text-green-600 text-xs">
+                            ৳ {{ number_format($totalIncome) }}
+                        </td>
+
+                        <!-- Expense Section -->
+                        <td class="border border-gray-300 px-[2px] py-[2px] text-left text-xs">
+                            <i class="fas fa-calendar-alt mr-2 text-gray-400"></i>
+                            {{ $record->date->format('M d, Y') }}
+                        </td>
+                        @php
+                        $totalExpense = 0;
+                        @endphp
+                        @foreach ($cars as $car)
+                        @php
+                        $expense = $record->expenses->where('car_id', $car->id)->sum('amount');
+                        $totalExpense += $expense;
+                        @endphp
+                        <td class="border border-gray-300 px-[2px] py-[2px] text-red-600 text-xs">
+                            ৳ {{ number_format($expense) }}
+                        </td>
+                        @endforeach
+                        <td class="border border-gray-300 px-[2px] py-[2px] font-semibold text-red-600 text-xs">
+                            ৳ {{ number_format($totalExpense) }}
+                        </td>
+
+                        <!-- Net Profit/Loss -->
+                        <td class="border border-gray-300 px-[2px] py-[2px] font-semibold {{ ($totalIncome - $totalExpense) >= 0 ? 'text-green-600' : 'text-red-600' }} text-xs">
+                            ৳ {{ number_format(abs($totalIncome - $totalExpense)) }}
+                            <i class="fas fa-{{ ($totalIncome - $totalExpense) >= 0 ? 'arrow-up' : 'arrow-down' }} ml-1"></i>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                    <tr class="bg-gray-200 font-semibold text-gray-900">
+                        <td colspan="{{ count($cars) + 1 }}" class="border border-gray-300 px-[2px] py-[2px] text-right text-xs">Total Income:</td>
+                        <td class="border border-gray-300 px-[2px] py-[2px] text-green-600 text-xs">
+                            ৳ {{ number_format($records->sum('total_income')) }}
+                        </td>
+                        <td colspan="{{ count($cars) + 1 }}" class="border border-gray-300 px-[2px] py-[2px] text-right text-xs">Total Expense:</td>
+                        <td class="border border-gray-300 px-[2px] py-[2px] text-red-600 text-xs">
+                            ৳ {{ number_format($records->sum('total_expense')) }}
+                        </td>
+                        <td class="border border-gray-300 px-[2px] py-[2px] {{ ($records->sum('total_income') - $records->sum('total_expense')) >= 0 ? 'text-green-600' : 'text-red-600' }} text-xs">
+                            ৳ {{ number_format(abs($records->sum('total_income') - $records->sum('total_expense'))) }}
+                            <i class="fas fa-{{ ($records->sum('total_income') - $records->sum('total_expense')) >= 0 ? 'arrow-up' : 'arrow-down' }} ml-1"></i>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
+
 
         <!-- Chart Section -->
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
@@ -546,83 +537,123 @@
                 </div>
             </div>
         </div>
+        
 
-        <!-- Icone VS Expense in one table with total at bottom of table -->
-        <div class="max-w-full overflow-x-auto mt-6 mb-11">
-            <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden text-center">
-                <thead>
-                    <tr>
-                        <th colspan="5" class="bg-green-600 text-white px-4 py-2 border border-gray-300">Income</th>
-                        <th colspan="5" class="bg-red-600 text-white px-4 py-2 border border-gray-300">Expense</th>
-                    </tr>
-                    <tr class="bg-gray-100 text-gray-700">
-                        <th class="border border-gray-300 px-[2px] py-[2px]">Date</th>
-                        <!-- Add all cars dynamically as th -->
-                        <th class="border border-gray-300 px-[2px] py-[2px]">Car1</th>
-                        <th class="border border-gray-300 px-[2px] py-[2px]">Car2</th>
-                        <th class="border border-gray-300 px-[2px] py-[2px]">Car3</th>
-                        <th class="border border-gray-300 px-[2px] py-[2px]">Total Income</th>
-                        <th class="border border-gray-300 px-[2px] py-[2px]">Car1</th>
-                        <th class="border border-gray-300 px-[2px] py-[2px]">Car2</th>
-                        <th class="border border-gray-300 px-[2px] py-[2px]">Car3</th>
-                        <th class="border border-gray-300 px-[2px] py-[2px]">Total Expense</th>
-                        <th class="border border-gray-300 px-[2px] py-[2px]">Net Profit/Loss</th>
-
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="odd:bg-white even:bg-gray-50">
-                        <td class="border border-gray-300 px-[2px] py-[2px]">2024-06-01</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">10000</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">150</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">120</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">120</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">370</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">50</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">60</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">55</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">165</td>
-                    </tr>
-                    <tr class="odd:bg-white even:bg-gray-50">
-                        <td class="border border-gray-300 px-[2px] py-[2px]">2024-06-02</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">90</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">130</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">140</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">360</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">40</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">70</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">65</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">175</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">175</td>
-                    </tr>
-                    <tr class="odd:bg-white even:bg-gray-50">
-                        <td class="border border-gray-300 px-[2px] py-[2px]">2024-06-03</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">110</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">140</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">130</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">380</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">60</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">50</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">50</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">70</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">180</td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr class="bg-gray-200 font-semibold text-gray-900">
-                        <td colspan="4" class="border border-gray-300 px-[2px] py-[2px] text-right">Total Income:</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">1110</td>
-                        <td colspan="3" class="border border-gray-300 px-[2px] py-[2px] text-right">Total Expense:</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">520</td>
-                        <td class="border border-gray-300 px-[2px] py-[2px]">520</td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-
-
+          <!-- Car-wise Summary Section -->
+     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6 mt-6">
+            <div class="p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Summary for {{ $dateRangeText }}</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-car mr-2"></i>
+                                        Car
+                                    </div>
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-arrow-up text-green-500 mr-2"></i>
+                                        Income
+                                    </div>
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-arrow-down text-red-500 mr-2"></i>
+                                        Expenses
+                                    </div>
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-chart-line mr-2"></i>
+                                        Net
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach($summary['summary'] as $carSummary)
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-2 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        @if($carSummary['car']->photo)
+                                        <div class="flex-shrink-0 h-8 w-8 mr-3">
+                                            <img class="h-8 w-8 rounded-full object-cover"
+                                                src="{{ asset('storage/' . $carSummary['car']->photo) }}"
+                                                alt="{{ $carSummary['car']->name }}">
+                                        </div>
+                                        @else
+                                        <div
+                                            class="flex-shrink-0 h-8 w-8 mr-3 bg-gray-200 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-car text-gray-500"></i>
+                                        </div>
+                                        @endif
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900">{{ $carSummary['car']->name
+                                                }}</div>
+                                            <div class="text-xs text-gray-500">{{ $carSummary['car']->plate_number }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-2 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-green-600">
+                                        ৳ {{ number_format($carSummary['income'], 2) }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-2 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-red-600">
+                                        ৳ {{ number_format($carSummary['expense'], 2) }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-2 whitespace-nowrap">
+                                    <div
+                                        class="text-sm font-medium {{ $carSummary['net'] >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                                        ৳ {{ number_format(abs($carSummary['net']), 2) }}
+                                        <i
+                                            class="fas fa-{{ $carSummary['net'] >= 0 ? 'arrow-up' : 'arrow-down' }} ml-1"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot class="bg-gray-50">
+                            <tr>
+                                <td class="px-6 py-2 whitespace-nowrap font-medium text-gray-700">Total</td>
+                                <td class="px-6 py-2 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-green-600">
+                                        ৳ {{ number_format($summary['totalIncome'], 2) }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-2 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-red-600">
+                                        ৳ {{ number_format($summary['totalExpense'], 2) }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-2 whitespace-nowrap">
+                                    <div
+                                        class="text-sm font-medium {{ ($summary['totalIncome'] - $summary['totalExpense']) >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                                        ৳ {{ number_format(abs($summary['totalIncome'] - $summary['totalExpense']), 2)
+                                        }}
+                                        <i
+                                            class="fas fa-{{ ($summary['totalIncome'] - $summary['totalExpense']) >= 0 ? 'arrow-up' : 'arrow-down' }} ml-1"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+         </div>
     </div>
 </div>
+
 
 @push('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
