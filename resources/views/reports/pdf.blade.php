@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>{{ $reportTitle }}</title>
+    <meta name="pdf:filename" content="{{ now()->format('F') }}-report.pdf">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -110,7 +111,7 @@
         <tr>
             <td style="background:#e6ffed; color:#166534; font-weight:bold; padding:8px;">Total Income</td>
             <td style="background:#fee2e2; color:#991b1b; font-weight:bold; padding:8px;">Total Expense</td>
-            <td style="background:#dbeafe; color:#1e40af; font-weight:bold; padding:8px;">Net Balance</td>
+            <td style="background:#dbeafe; color:#1e40af; font-weight:bold; padding:8px;">Net Profit/Loss</td>
         </tr>
         <tr>
             <td style="padding:8px;">{{ number_format($summary['income'], 2) }}</td>

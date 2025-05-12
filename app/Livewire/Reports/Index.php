@@ -217,9 +217,18 @@ class Index extends Component
             'reportTitle' => $reportTitle,
         ]);
 
+        // Create a more descriptive filename based on report type and period
+        $typePrefix = match($this->reportTypes) {
+            'all' => 'Complete',
+            'income' => 'Income',
+            'expense' => 'Expense',
+            default => 'Financial'
+        };
+        $filename = $typePrefix . '-Report-' . $this->reportPeriodLabel . '.pdf';
+        
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->output();
-        }, 'report.pdf');
+        }, $filename);
     }
 
     public function render()
