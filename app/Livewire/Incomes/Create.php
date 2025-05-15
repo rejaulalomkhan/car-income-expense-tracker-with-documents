@@ -11,7 +11,7 @@ class Create extends Component
     public $car_id = '';
     public $date;
     public $amount;
-    public $source = '';
+    public $source = 'Rent';
     public $description = '';
 
     protected function rules()

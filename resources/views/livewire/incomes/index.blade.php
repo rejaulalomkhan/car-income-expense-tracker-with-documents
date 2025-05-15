@@ -146,7 +146,10 @@
                                     ৳ {{ number_format($income->amount, 2) }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                                    {{ $income->description }}
+                                    @if($income->description)
+                                        {{ $income->description }} <br>
+                                    @endif
+                                    {{ $income->source }}   
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <a href="{{ route('incomes.edit', $income) }}"

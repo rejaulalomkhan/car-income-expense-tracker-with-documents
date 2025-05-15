@@ -22,6 +22,7 @@ class Edit extends Component
         'Driver',
         'Fines',
         'Tolls',
+        'Rent',
         'Garage Rent',
         'Spare Parts',
         'Documents Update'

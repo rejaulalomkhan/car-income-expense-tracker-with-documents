@@ -11,7 +11,7 @@ class Create extends Component
     public $car_id = '';
     public $date;
     public $amount;
-    public $category = '';
+    public $category = 'Rent';
     public $description = '';
 
     // Predefined expense categories
@@ -21,6 +21,7 @@ class Create extends Component
         'Driver',
         'Fines',
         'Tolls',
+        'Rent',
         'Garage Rent',
         'Spare Parts',
         'Documents Update'
