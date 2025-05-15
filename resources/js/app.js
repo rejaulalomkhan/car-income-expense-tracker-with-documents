@@ -3,9 +3,14 @@ import 'flatpickr/dist/flatpickr.css';
 import Alpine from 'alpinejs';
 import focus from '@alpinejs/focus';
 
-window.Alpine = Alpine;
-Alpine.plugin(focus);
-Alpine.start();
+// Prevent multiple Alpine instances
+if (!window.Alpine) {
+    window.Alpine = Alpine;
+    Alpine.plugin(focus);
+    Alpine.start();
+} else {
+    console.warn('Alpine is already defined on window. Skipping initialization to prevent multiple instances.');
+}
 
 // Register Service Worker
 if ('serviceWorker' in navigator) {

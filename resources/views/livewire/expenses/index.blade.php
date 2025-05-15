@@ -1,5 +1,8 @@
 <div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div 
+        x-data="{}"
+        x-on:expense-deleted.window="setTimeout(() => { @this.$refresh() }, 300)"
+        class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
             <div class="p-6">
                 <!-- Total Amount Card -->
@@ -44,6 +47,13 @@
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
                     role="alert">
                     <span class="block sm:inline">{{ session('message') }}</span>
+                </div>
+                @endif
+
+                @if (session()->has('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+                    role="alert">
+                    <span class="block sm:inline">{{ session('error') }}</span>
                 </div>
                 @endif
 
@@ -156,8 +166,9 @@
                                         <i class="fas fa-edit"></i>
                                         Edit
                                     </a>
-                                    <button wire:click="delete({{ $expense->id }})"
-                                        wire:confirm="Are you sure you want to delete this expense?"
+                                    <button 
+                                        x-data="{}"
+                                        x-on:click.prevent="confirm('Are you sure you want to delete this expense?') && $wire.delete({{ $expense->id }})"
                                         class="text-red-600 hover:text-red-900">
                                         <i class="fas fa-trash"></i>
                                         Delete

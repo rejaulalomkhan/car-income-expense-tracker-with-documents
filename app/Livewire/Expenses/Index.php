@@ -43,8 +43,14 @@ class Index extends Component
 
     public function delete(Expense $expense)
     {
-        $expense->delete();
-        session()->flash('message', 'Expense deleted successfully.');
+        try {
+            $expense->delete();
+            $this->dispatch('expense-deleted');
+            session()->flash('message', 'Expense deleted successfully.');
+            $this->render();
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to delete expense: ' . $e->getMessage());
+        }
     }
 
     protected function getDateRange()
@@ -53,44 +59,45 @@ class Index extends Component
 
         return match($this->dateFilter) {
             'today' => [
-                $now->startOfDay(),
-                $now->clone()->endOfDay()
+                $now->copy()->startOfDay(),
+                $now->copy()->endOfDay()
             ],
             'this_week' => [
-                $now->startOfWeek(),
-                $now->clone()->endOfWeek()
+                $now->copy()->startOfWeek(),
+                $now->copy()->endOfWeek()
             ],
             'last_week' => [
-                $now->subWeek()->startOfWeek(),
-                $now->subWeek()->endOfWeek()
+                $now->copy()->subWeek()->startOfWeek(),
+                $now->copy()->subWeek()->endOfWeek()
             ],
             'this_month' => [
-                $now->startOfMonth(),
-                $now->clone()->endOfMonth()
+                $now->copy()->startOfMonth(),
+                $now->copy()->endOfMonth()
             ],
             'last_month' => [
-                $now->subMonth()->startOfMonth(),
-                $now->subMonth()->endOfMonth()
+                $now->copy()->subMonth()->startOfMonth(),
+                $now->copy()->subMonth()->endOfMonth()
             ],
             'last_3_months' => [
-                $now->subMonths(3)->startOfMonth(),
-                $now->clone()->endOfMonth()
+                $now->copy()->subMonths(3)->startOfMonth(),
+                $now->copy()->endOfMonth()
             ],
             'this_year' => [
-                $now->startOfYear(),
-                $now->clone()->endOfYear()
+                $now->copy()->startOfYear(),
+                $now->copy()->endOfYear()
             ],
             'last_year' => [
-                $now->subYear()->startOfYear(),
-                $now->subYear()->endOfYear()
+                // Create two separate Carbon instances to avoid modifying the same object
+                now()->subYear()->startOfYear(),
+                now()->subYear()->endOfYear()
             ],
             'all_time' => [
                 now()->subYears(50), // Effectively "all time"
                 now()
             ],
             default => [
-                $now->startOfMonth(),
-                $now->clone()->endOfMonth()
+                $now->copy()->startOfMonth(),
+                $now->copy()->endOfMonth()
             ]
         };
     }

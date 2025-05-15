@@ -3,8 +3,8 @@ const urlsToCache = [
     '/',
     '/offline.html',
     '/css/app.css',
-    '/js/app.js',
-    '/manifest.json'
+    '/js/app.js'
+    // Removed manifest.json from the cache list to prevent CORS issues
 ];
 
 // Install Service Worker
@@ -12,13 +12,26 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
-                return cache.addAll(urlsToCache);
+                console.log('Opened cache');
+                // Cache each URL individually to prevent a single failure from stopping all caching
+                return Promise.allSettled(
+                    urlsToCache.map(url => 
+                        cache.add(url).catch(err => {
+                            console.error(`Failed to cache ${url}:`, err);
+                        })
+                    )
+                );
             })
     );
 });
 
 // Listen for requests
 self.addEventListener('fetch', (event) => {
+    // Don't try to handle non-GET requests or those with query params
+    if (event.request.method !== 'GET' || event.request.url.includes('livewire/message')) {
+        return;
+    }
+    
     event.respondWith(
         caches.match(event.request)
             .then((response) => {
