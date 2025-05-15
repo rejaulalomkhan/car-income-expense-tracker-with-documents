@@ -21,8 +21,8 @@ class Edit extends Component
             'car_id' => 'required|exists:cars,id',
             'date' => 'required|date',
             'amount' => 'required|numeric|min:0',
-            'source' => 'required|string|max:100',
-            'description' => 'required|string|max:255',
+            'source' => 'nullable|string|max:100',
+            'description' => 'nullable|string|max:255',
         ];
     }
 

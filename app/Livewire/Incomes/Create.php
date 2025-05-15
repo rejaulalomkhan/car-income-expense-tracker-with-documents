@@ -21,7 +21,7 @@ class Create extends Component
             'date' => 'required|date',
             'amount' => 'required|numeric|min:0',
             'source' => 'required|string|max:100',
-            'description' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
         ];
     }
 

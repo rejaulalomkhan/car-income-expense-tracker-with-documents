@@ -58,10 +58,9 @@
                         </div>
 
                         <div class="md:col-span-2">
-                            <label for="description" class="block text-sm font-medium text-gray-700">Description
-                                *</label>
+                            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
                             <textarea id="description" wire:model="description" rows="3"
-                                placeholder="Enter expense description (e.g., Regular maintenance service)"
+                                placeholder="Enter expense description (optional)"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 @error('description') border-red-300 @enderror"></textarea>
                             @error('description') <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                             @enderror

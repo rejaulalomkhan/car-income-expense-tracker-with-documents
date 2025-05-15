@@ -180,10 +180,18 @@
                                 <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
                                     <div class="flex flex-col items-center py-4">
                                         <i class="fas fa-inbox text-4xl text-gray-400 mb-2"></i>
-                                        <p>No expenses found.</p>
+                                        <p class="mb-2">
+                                            No expenses found 
+                                            @if($selectedCar)
+                                                for {{ $cars->firstWhere('id', $selectedCar)->name }}
+                                            @endif
+                                            @if($dateFilter)
+                                                in {{ $dateRangeText }}
+                                            @endif
+                                        </p>
                                         <a href="{{ route('expenses.create') }}"
                                             class="mt-2 inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
-                                            <i class="fas fa-plus mr-1"></i> Add Your First Expense
+                                            <i class="fas fa-plus mr-1"></i> Add Expense
                                         </a>
                                     </div>
                                 </td>
