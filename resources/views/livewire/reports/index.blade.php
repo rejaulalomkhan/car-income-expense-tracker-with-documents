@@ -23,9 +23,13 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Date Range</label>
                         <select wire:model.live="dateRange" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
                             <option value="this_month">This Month</option>
                             <option value="last_month">Last Month</option>
                             <option value="this_year">This Year</option>
+                            <option value="last_year">Last Year</option>
+                            <option value="custom">Custom Date Range</option>
                         </select>
                     </div>
                     <!-- Report Type (Dropdown) -->
@@ -38,6 +42,43 @@
                         </select>
                     </div>
                 </div>
+                
+                <!-- Custom Date Range (only shown when custom is selected) -->
+                @if($dateRange == 'custom')
+                <!-- Additional Custom Filters -->
+                <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mb-6">
+                    <!-- Custom Month Selector -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Select Specific Month & Year</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <select wire:model="customMonth" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="01">January</option>
+                                <option value="02">February</option>
+                                <option value="03">March</option>
+                                <option value="04">April</option>
+                                <option value="05">May</option>
+                                <option value="06">June</option>
+                                <option value="07">July</option>
+                                <option value="08">August</option>
+                                <option value="09">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                            
+                            <select wire:model="customYear" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                @for ($i = date('Y'); $i >= date('Y') - 10; $i--)
+                                    <option value="{{ $i }}">{{ $i }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                        <button wire:click="setCustomMonthYear" class="mt-2 inline-flex items-center px-3 py-1 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            Apply
+                        </button>
+                    </div>
+                </div>
+                @endif
+                
                 <!-- Export Button -->
                 <div class="mb-6">
                     <button wire:click="generateReport" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">

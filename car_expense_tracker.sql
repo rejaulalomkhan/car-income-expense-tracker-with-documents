@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 08, 2025 at 05:30 AM
+-- Generation Time: May 17, 2025 at 07:23 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -32,14 +32,6 @@ CREATE TABLE `cache` (
   `value` mediumtext NOT NULL,
   `expiration` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `cache`
---
-
-INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('be_software_cache_356a192b7913b04c54574d18c28d46e6395428ab', 'i:1;', 1746649932),
-('be_software_cache_356a192b7913b04c54574d18c28d46e6395428ab:timer', 'i:1746649932;', 1746649932);
 
 -- --------------------------------------------------------
 
@@ -77,10 +69,8 @@ CREATE TABLE `cars` (
 --
 
 INSERT INTO `cars` (`id`, `name`, `plate_number`, `model`, `year`, `color`, `photo`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'Car3', 'ABC-123', 'Corolla', 2020, 'White', NULL, 'active', '2025-05-06 09:15:03', '2025-05-07 03:42:53'),
-(2, 'Car4', 'XYZ-789', 'Civic', 2021, 'Black', NULL, 'active', '2025-05-06 09:15:03', '2025-05-07 03:43:19'),
-(5, 'Car2', '633', '1615', 1995, 'Red', 'cars/etjkSUBaRB8IHjrwqRTRCe8DcqyLoYQqcSIDwXY8.png', 'active', '2025-05-06 09:16:59', '2025-05-07 03:42:34'),
-(6, 'Car1', 'ঢাকা গ ৪৫০', 'করলা', 1998, 'Red', 'cars/GXSpuQrosKGvYYXeryEzA2A0yJCJ5xjcH2KdAx7w.png', 'active', '2025-05-06 09:22:06', '2025-05-06 09:22:06');
+(10, 'Car 1', 'ACB123', 'Civic', 2005, 'red', NULL, 'active', '2025-05-17 04:01:41', '2025-05-17 04:01:41'),
+(11, 'Car 2', 'ABC3', 'Camry', 2010, 'Black', NULL, 'active', '2025-05-17 04:02:11', '2025-05-17 04:02:11');
 
 -- --------------------------------------------------------
 
@@ -99,25 +89,6 @@ CREATE TABLE `car_documents` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `notification_sent` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `car_documents`
---
-
-INSERT INTO `car_documents` (`id`, `car_id`, `document_type`, `document_expiry_date`, `document_image`, `document_comment`, `created_at`, `updated_at`, `notification_sent`) VALUES
-(1, 1, 'Certificate of Registration', '2026-01-06', NULL, 'Certificate of Registration for Toyota Corolla', '2025-05-06 09:15:03', '2025-05-06 09:15:03', 0),
-(2, 1, 'Fitness', '2025-06-06', 'car-documents/21ko4aSTWR2gPEgWZlOby86gOYbGiGxHVYNL91nB.pdf', 'Fitness for Toyota Corolla', '2025-05-06 09:15:03', '2025-05-07 04:40:05', 0),
-(3, 1, 'Tax Token', '2025-10-06', NULL, 'Tax Token for Toyota Corolla', '2025-05-06 09:15:03', '2025-05-06 09:15:03', 0),
-(4, 1, 'Insurance', '2026-01-06', NULL, 'Insurance for Toyota Corolla', '2025-05-06 09:15:04', '2025-05-06 09:15:04', 0),
-(5, 1, 'Route Permit', '2025-10-06', NULL, 'Route Permit for Toyota Corolla', '2025-05-06 09:15:04', '2025-05-06 09:15:04', 0),
-(6, 1, 'Branding', '2026-04-06', NULL, 'Branding for Toyota Corolla', '2025-05-06 09:15:04', '2025-05-06 09:15:04', 0),
-(7, 2, 'Certificate of Registration', '2025-12-06', NULL, 'Certificate of Registration for Honda Civic', '2025-05-06 09:15:04', '2025-05-06 09:15:04', 0),
-(8, 2, 'Fitness', '2025-03-05', NULL, 'Fitness for Honda Civic', '2025-05-06 09:15:04', '2025-05-07 20:27:00', 0),
-(9, 2, 'Tax Token', '2026-02-06', NULL, 'Tax Token for Honda Civic', '2025-05-06 09:15:04', '2025-05-06 09:15:04', 0),
-(10, 2, 'Insurance', '2025-11-06', NULL, 'Insurance for Honda Civic', '2025-05-06 09:15:04', '2025-05-06 09:15:04', 0),
-(11, 2, 'Route Permit', '2025-12-06', NULL, 'Route Permit for Honda Civic', '2025-05-06 09:15:04', '2025-05-06 09:15:04', 0),
-(12, 2, 'Branding', '2026-02-06', NULL, 'Branding for Honda Civic', '2025-05-06 09:15:04', '2025-05-06 09:15:04', 0),
-(25, 6, 'Branding', '2027-04-16', 'car-documents/1Icml1U7NTLAcLE1RWX00ZHvteN5jYNGKrYlMGIV.pdf', 'Test', '2025-05-06 09:48:17', '2025-05-06 10:05:38', 0);
 
 -- --------------------------------------------------------
 
@@ -194,19 +165,10 @@ CREATE TABLE `expenses` (
 --
 
 INSERT INTO `expenses` (`id`, `car_id`, `amount`, `category`, `date`, `description`, `created_at`, `updated_at`) VALUES
-(2, 1, 200.00, 'Fuel', '2024-01-12', 'Fuel refill', '2025-05-06 09:15:06', '2025-05-06 09:15:06'),
-(3, 2, 500.00, 'Maintenance', '2024-01-10', 'Regular maintenance service', '2025-05-06 09:15:06', '2025-05-06 09:15:06'),
-(4, 2, 200.00, 'Fuel', '2024-01-12', 'Fuel refill', '2025-05-06 09:15:06', '2025-05-06 09:15:06'),
-(9, 6, 1.00, 'Fines', '2014-08-11', 'Minus saepe aut quas', '2025-05-06 10:46:55', '2025-05-06 10:46:55'),
-(10, 5, 42.00, 'Spare Parts', '2016-02-24', 'Vel voluptatem debi', '2025-05-06 10:47:00', '2025-05-06 10:47:00'),
-(12, 6, 1000.00, 'Driver', '2025-05-07', 'tre', '2025-05-06 23:38:02', '2025-05-06 23:38:02'),
-(13, 6, 5000.00, 'Fuel', '2025-05-07', 'test', '2025-05-06 23:38:36', '2025-05-06 23:38:36'),
-(14, 6, 99.00, 'Spare Parts', '1971-12-30', 'Earum architecto rep', '2025-05-07 06:25:54', '2025-05-07 06:25:54'),
-(15, 2, 30000.00, 'Garage Rent', '2025-05-07', 'asdf', '2025-05-07 07:20:44', '2025-05-07 07:20:44'),
-(16, 5, 34.00, 'Maintenance', '1988-03-21', 'Excepteur et eos mol', '2025-05-07 08:06:17', '2025-05-07 08:06:17'),
-(17, 1, 70.00, 'Fuel', '1977-06-01', 'Qui earum cupiditate', '2025-05-07 08:06:20', '2025-05-07 08:06:20'),
-(18, 5, 55.00, 'Fuel', '2025-01-22', 'Qui omnis odit deser', '2025-05-07 08:06:46', '2025-05-07 08:06:46'),
-(19, 5, 2000.00, 'Fuel', '2025-05-06', 'Test', '2025-05-07 11:18:15', '2025-05-07 11:18:15');
+(1, 10, 15000.00, 'Maintenance', '2024-12-30', '', '2025-05-17 04:07:44', '2025-05-17 04:07:44'),
+(2, 11, 15000.00, 'Maintenance', '2024-12-30', '', '2025-05-17 04:08:02', '2025-05-17 04:08:02'),
+(3, 10, 1000.00, 'Others', '2025-01-26', '', '2025-05-17 04:17:33', '2025-05-17 04:17:33'),
+(4, 11, 1000.00, 'Others', '2025-01-26', '', '2025-05-17 04:17:44', '2025-05-17 04:17:44');
 
 -- --------------------------------------------------------
 
@@ -264,17 +226,32 @@ CREATE TABLE `incomes` (
 --
 
 INSERT INTO `incomes` (`id`, `car_id`, `amount`, `source`, `date`, `description`, `created_at`, `updated_at`) VALUES
-(1, 1, 1500.00, 'Rental', '2024-01-15', 'Weekend rental income', '2025-05-06 09:15:05', '2025-05-06 09:15:05'),
-(2, 1, 2000.00, 'Tour', '2024-01-20', 'Tour package income', '2025-05-06 09:15:05', '2025-05-06 09:15:05'),
-(3, 2, 1500.00, 'Rental', '2024-01-15', 'Weekend rental income', '2025-05-06 09:15:05', '2025-05-06 09:15:05'),
-(4, 2, 2000.00, 'Tour', '2024-01-20', 'Tour package income', '2025-05-06 09:15:06', '2025-05-06 09:15:06'),
-(9, 2, 30000.00, 'ji ', '2025-05-06', 'j', '2025-05-06 10:21:38', '2025-05-06 10:21:38'),
-(10, 2, 1000.00, 'Vara', '2025-05-06', 'vara', '2025-05-06 10:29:39', '2025-05-06 10:29:39'),
-(11, 6, 20000.00, 'Test', '2025-05-07', 'Test', '2025-05-07 04:18:27', '2025-05-07 04:18:27'),
-(12, 5, 1000.00, 'ji ', '2025-05-07', 'test', '2025-05-07 04:33:53', '2025-05-07 04:33:53'),
-(13, 1, 10000.00, 'Test', '2025-05-07', 'test', '2025-05-07 04:34:06', '2025-05-07 04:34:06'),
-(14, 2, 5000.00, 'iu', '2025-05-01', 'ui', '2025-05-07 08:08:58', '2025-05-07 08:08:58'),
-(15, 5, 2000.00, 'uio', '2025-02-07', 'hui', '2025-05-07 08:09:35', '2025-05-07 08:09:35');
+(24, 10, 10200.00, 'Rent', '2024-12-11', '', '2025-05-17 04:03:20', '2025-05-17 04:03:20'),
+(25, 10, 15000.00, 'Rent', '2024-12-16', '', '2025-05-17 04:03:45', '2025-05-17 04:03:45'),
+(26, 10, 14800.00, 'Rent', '2024-12-12', '', '2025-05-17 04:04:05', '2025-05-17 04:04:05'),
+(27, 11, 8300.00, 'Rent', '2024-12-21', '', '2025-05-17 04:04:52', '2025-05-17 04:04:52'),
+(28, 10, 16500.00, 'Rent', '2024-12-22', '', '2025-05-17 04:05:24', '2025-05-17 04:05:24'),
+(29, 10, 19000.00, 'Rent', '2024-12-27', '', '2025-05-17 04:05:47', '2025-05-17 04:05:47'),
+(30, 11, 19000.00, 'Rent', '2024-12-27', '', '2025-05-17 04:06:05', '2025-05-17 04:06:05'),
+(31, 10, 19000.00, 'Rent', '2024-12-30', '', '2025-05-17 04:06:43', '2025-05-17 04:06:43'),
+(32, 11, 20000.00, 'Rent', '2024-12-30', '', '2025-05-17 04:07:07', '2025-05-17 04:07:07'),
+(33, 10, 16000.00, 'Rent', '2025-01-03', '', '2025-05-17 04:08:28', '2025-05-17 04:08:28'),
+(34, 10, 17400.00, 'Rent', '2025-01-06', '', '2025-05-17 04:08:51', '2025-05-17 04:08:51'),
+(35, 11, 17000.00, 'Rent', '2025-01-06', '', '2025-05-17 04:09:11', '2025-05-17 04:09:11'),
+(36, 10, 15000.00, 'Rent', '2025-01-08', '', '2025-05-17 04:09:28', '2025-05-17 04:09:28'),
+(37, 11, 19000.00, 'Rent', '2025-01-09', '', '2025-05-17 04:09:47', '2025-05-17 04:09:47'),
+(38, 10, 18500.00, 'Rent', '2025-01-13', '', '2025-05-17 04:10:04', '2025-05-17 04:10:04'),
+(39, 11, 13600.00, 'Rent', '2025-01-13', '', '2025-05-17 04:10:18', '2025-05-17 04:10:18'),
+(40, 10, 18000.00, 'Rent', '2025-01-16', '', '2025-05-17 04:13:09', '2025-05-17 04:13:09'),
+(41, 11, 15000.00, 'Rent', '2025-01-17', '', '2025-05-17 04:13:27', '2025-05-17 04:13:27'),
+(42, 10, 18000.00, 'Rent', '2025-01-20', '', '2025-05-17 04:13:41', '2025-05-17 04:13:41'),
+(43, 11, 13000.00, 'Rent', '2025-01-20', '', '2025-05-17 04:13:54', '2025-05-17 04:13:54'),
+(44, 10, 20000.00, 'Rent', '2025-01-24', '', '2025-05-17 04:14:15', '2025-05-17 04:14:15'),
+(45, 11, 13000.00, 'Rent', '2025-01-24', '', '2025-05-17 04:14:32', '2025-05-17 04:14:32'),
+(46, 10, 17000.00, 'Rent', '2025-01-26', '', '2025-05-17 04:14:51', '2025-05-17 04:14:51'),
+(47, 11, 13000.00, 'Rent', '2025-01-26', '', '2025-05-17 04:15:04', '2025-05-17 04:15:04'),
+(48, 10, 17000.00, 'Rent', '2025-01-30', '', '2025-05-17 04:15:19', '2025-05-17 04:15:19'),
+(49, 11, 12000.00, 'Rent', '2025-01-30', '', '2025-05-17 04:15:30', '2025-05-17 04:15:30');
 
 -- --------------------------------------------------------
 
@@ -409,8 +386,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('27jnliJ8F9xHbSIYTER9kYuUoW2EkeaTFx0G6znU', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiZ0pRYm9yNzhFSlBlaUJhSHNySEVYYTBVTkY5azlHWHUwcHNCamJtRyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjMxOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvZGFzaGJvYXJkIjt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1746644832),
-('aVT2Je5vbeJF3mznwJvh0d5mDCCUhSixJbuo03Rg', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoic0xFcVVJSjJlUmhIcFk5aWR1VVhCUFcxejVTdDNDVjFkb1RUNmV1OSI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjMxOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvZGFzaGJvYXJkIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1746650143);
+('bSREujnqy6EzhFHw1mqEibxITujzPEL1w3C6POWb', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiYVN3SzdnMmlENW00aXJJU1pFQ1Z6b0JWeGJ4ckI2SGs2MHRyR21EUyI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjMxOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvZGFzaGJvYXJkIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1746682212),
+('yFRVdKz5BMLnlL0iNUg6Cxp7No4vfjzmvVWkd1zh', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiUUxnMVZJUFZJRjVWUDNjdERjS1VGSHAzT0RoVklacDhrY0JvcWxMaCI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjMxOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvZGFzaGJvYXJkIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1746683154);
 
 -- --------------------------------------------------------
 
@@ -433,8 +410,8 @@ CREATE TABLE `settings` (
 INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES
 (1, 'contact_email', 'armanazij@gmail.com', '2025-05-07 10:56:17', '2025-05-07 10:56:17'),
 (2, 'contact_phone', '01916628339', '2025-05-07 10:56:17', '2025-05-07 10:56:31'),
-(3, 'theme', 'light', '2025-05-07 10:56:17', '2025-05-07 11:47:13'),
-(4, 'language', 'en', '2025-05-07 10:56:17', '2025-05-07 10:56:17'),
+(3, 'theme', 'light', '2025-05-07 10:56:17', '2025-05-15 12:36:33'),
+(4, 'language', 'bn', '2025-05-07 10:56:17', '2025-05-12 07:20:06'),
 (5, 'logo', 'settings/DdpLy2RZYZiga7TMnaXyqwUeF5DmIYOiRsS2nnWQ.png', '2025-05-07 10:56:17', '2025-05-07 12:43:40'),
 (6, 'icon', 'settings/hT9nBF1vGdElROiIpdd8OKQ1lzgcXyMnW7yUn1vy.png', '2025-05-07 10:56:17', '2025-05-07 12:43:40');
 
@@ -461,7 +438,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `push_subscription`) VALUES
-(1, 'Admin', 'admin@admin.com', NULL, '$2y$12$AfR/sjiIVHLT.x.dbPJcG.VBOAeH56lR55vXo42QaR5Dxr9Jrdcny', NULL, '2025-05-06 09:15:03', '2025-05-06 09:15:03', NULL);
+(1, 'Admin', 'admin@admin.com', NULL, '$2y$12$AfR/sjiIVHLT.x.dbPJcG.VBOAeH56lR55vXo42QaR5Dxr9Jrdcny', NULL, '2025-05-06 09:15:03', '2025-05-06 09:15:03', NULL),
+(2, 'Arman azij', 'armanazij@gmail.com', NULL, '$2y$12$qMrkR7Ghfmx0QKZculTrHe5QE1RLaot0G6PWEB03989c5kDnJYfve', NULL, '2025-05-15 12:38:57', '2025-05-15 12:38:57', NULL);
 
 --
 -- Indexes for dumped tables
@@ -603,13 +581,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `cars`
 --
 ALTER TABLE `cars`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `car_documents`
 --
 ALTER TABLE `car_documents`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `company_documents`
@@ -627,7 +605,7 @@ ALTER TABLE `document_types`
 -- AUTO_INCREMENT for table `expenses`
 --
 ALTER TABLE `expenses`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -645,7 +623,7 @@ ALTER TABLE `fuels`
 -- AUTO_INCREMENT for table `incomes`
 --
 ALTER TABLE `incomes`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -675,7 +653,7 @@ ALTER TABLE `settings`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables

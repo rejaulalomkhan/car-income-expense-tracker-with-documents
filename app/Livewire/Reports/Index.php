@@ -22,6 +22,8 @@ class Index extends Component
     public $settings;
     public $variant = 'summary';
     public $reportPeriodLabel = '';
+    public $customMonth = '';
+    public $customYear = '';
     public $summary = [
         'income' => 0,
         'expense' => 0,
@@ -31,6 +33,12 @@ class Index extends Component
     public function mount()
     {
         $this->settings = Setting::first();
+        
+        // Set default month and year to current month/year
+        $now = Carbon::now();
+        $this->customMonth = $now->format('m');
+        $this->customYear = $now->format('Y');
+        
         $this->setDateRange();
     }
 
@@ -41,21 +49,23 @@ class Index extends Component
             case 'today':
                 $this->startDate = $now->format('Y-m-d');
                 $this->endDate = $now->format('Y-m-d');
+                $this->reportPeriodLabel = 'Today (' . $now->format('M d, Y') . ')';
                 break;
             case 'yesterday':
                 $this->startDate = $now->subDay()->format('Y-m-d');
                 $this->endDate = $this->startDate;
+                $this->reportPeriodLabel = 'Yesterday (' . $now->format('M d, Y') . ')';
                 break;
             case 'this_month':
                 $this->startDate = $now->copy()->startOfMonth()->format('Y-m-d');
                 $this->endDate = $now->copy()->endOfMonth()->format('Y-m-d');
-                $this->reportPeriodLabel = $now->format('F');
+                $this->reportPeriodLabel = $now->format('F Y');
                 break;
             case 'last_month':
                 $lastMonth = $now->copy()->subMonth();
                 $this->startDate = $lastMonth->startOfMonth()->format('Y-m-d');
                 $this->endDate = $lastMonth->endOfMonth()->format('Y-m-d');
-                $this->reportPeriodLabel = $lastMonth->format('F');
+                $this->reportPeriodLabel = $lastMonth->format('F Y');
                 break;
             case 'this_year':
                 $this->startDate = $now->copy()->startOfYear()->format('Y-m-d');
@@ -63,22 +73,50 @@ class Index extends Component
                 $this->reportPeriodLabel = $now->format('Y');
                 break;
             case 'last_year':
-                $this->startDate = $now->subYear()->startOfYear()->format('Y-m-d');
-                $this->endDate = $now->endOfYear()->format('Y-m-d');
+                $lastYear = $now->copy()->subYear();
+                $this->startDate = $lastYear->startOfYear()->format('Y-m-d');
+                $this->endDate = $lastYear->endOfYear()->format('Y-m-d');
+                $this->reportPeriodLabel = $lastYear->format('Y');
                 break;
             case 'custom':
-                // Keep existing dates
+                // If dates are not set, default to current month
+                if (empty($this->startDate) || empty($this->endDate)) {
+                    $this->startDate = $now->copy()->startOfMonth()->format('Y-m-d');
+                    $this->endDate = $now->copy()->endOfMonth()->format('Y-m-d');
+                }
+                $startDate = Carbon::parse($this->startDate);
+                $endDate = Carbon::parse($this->endDate);
+                $this->reportPeriodLabel = $startDate->format('M d, Y') . ' - ' . $endDate->format('M d, Y');
                 break;
             default:
                 $this->startDate = $now->copy()->startOfMonth()->format('Y-m-d');
                 $this->endDate = $now->copy()->endOfMonth()->format('Y-m-d');
-                $this->reportPeriodLabel = $now->format('F');
+                $this->reportPeriodLabel = $now->format('F Y');
         }
     }
 
     public function updatedDateRange()
     {
         $this->setDateRange();
+        
+        // If custom date range is selected, set the dates based on the month/year selection
+        if ($this->dateRange === 'custom') {
+            $this->setCustomMonthYear();
+        }
+    }
+    
+    public function updatedCustomMonth()
+    {
+        if ($this->dateRange === 'custom') {
+            $this->setCustomMonthYear();
+        }
+    }
+    
+    public function updatedCustomYear()
+    {
+        if ($this->dateRange === 'custom') {
+            $this->setCustomMonthYear();
+        }
     }
 
     public function updatedReportTypes($value)
@@ -254,24 +292,12 @@ class Index extends Component
     {
         $query = $type === 'expense' ? Expense::query() : Income::query();
         
-        // Set date range based on selection
-        $now = Carbon::now();
-        switch ($this->dateRange) {
-            case 'this_month':
-                $this->startDate = $now->startOfMonth()->format('Y-m-d');
-                $this->endDate = $now->endOfMonth()->format('Y-m-d');
-                $this->reportPeriodLabel = $now->format('F Y');
-                break;
-            case 'last_month':
-                $this->startDate = $now->subMonth()->startOfMonth()->format('Y-m-d');
-                $this->endDate = $now->endOfMonth()->format('Y-m-d');
-                $this->reportPeriodLabel = $now->format('F Y');
-                break;
-            case 'this_year':
-                $this->startDate = $now->startOfYear()->format('Y-m-d');
-                $this->endDate = $now->endOfYear()->format('Y-m-d');
-                $this->reportPeriodLabel = $now->format('Y');
-                break;
+        // Apply date filter
+        $query->whereBetween('date', [$this->startDate, $this->endDate]);
+        
+        // Apply car filter if selected
+        if (!empty($this->selectedCars)) {
+            $query->whereIn('car_id', $this->selectedCars);
         }
 
         // Get all cars first
@@ -305,6 +331,16 @@ class Index extends Component
                 ->get();
 
             return ['bySource' => $bySource, 'byCar' => $byCar];
+        }
+    }
+
+    public function setCustomMonthYear()
+    {
+        if (!empty($this->customMonth) && !empty($this->customYear)) {
+            $date = Carbon::createFromDate($this->customYear, $this->customMonth, 1);
+            $this->startDate = $date->startOfMonth()->format('Y-m-d');
+            $this->endDate = $date->endOfMonth()->format('Y-m-d');
+            $this->reportPeriodLabel = $date->format('F Y');
         }
     }
 } 
