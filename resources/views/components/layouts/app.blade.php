@@ -4,13 +4,21 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    
+    <!-- Performance optimizations -->
+    <link rel="dns-prefetch" href="//fonts.bunny.net">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#4f46e5">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="{{ config('app.name') }}">
-    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="application-name" content="{{ config('app.name') }}">
+    <link rel="manifest" href="{{ asset('manifest.json') }}" crossorigin="use-credentials">
 
     <!-- App Icons -->
     @if($appIcon ?? false)
@@ -23,13 +31,35 @@
 
     <title>{{ $title ?? config('app.name', 'Laravel') }}</title>
 
-    <!-- Fonts -->
+    <!-- Critical CSS (inlined for performance) -->
+    <style>
+        /* Base critical styles for immediate rendering */
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+            min-height: 100vh;
+        }
+        .min-h-screen { min-height: 100vh; }
+        .bg-white { background-color: white; }
+        .bg-gray-100 { background-color: #f3f4f6; }
+        .shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .fixed { position: fixed; }
+    </style>
+
+    <!-- Fonts with display=swap for better performance -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Font Awesome -->
+    <!-- Font Awesome (load async for less blocking) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    </noscript>
 
     <!-- Styles -->
     @livewireStyles
@@ -92,44 +122,74 @@
     @vite(['resources/js/app.js'])
 
     <script>
-        // Show notifications
-        function showNotification(message, type = 'info') {
-            const container = document.getElementById('notification-container');
-            const notification = document.createElement('div');
-            notification.className = `max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 ${
-                type === 'success' ? 'border-l-4 border-green-500' :
-                type === 'error' ? 'border-l-4 border-red-500' :
-                'border-l-4 border-blue-500'
-            }`;
+        // Show notifications with performance optimizations
+        const showNotification = (() => {
+            // Cache DOM reference
+            let container;
+            
+            return function(message, type = 'info') {
+                // Get container reference just once and cache it
+                if (!container) {
+                    container = document.getElementById('notification-container');
+                }
+                
+                const notification = document.createElement('div');
+                notification.className = `max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 ${
+                    type === 'success' ? 'border-l-4 border-green-500' :
+                    type === 'error' ? 'border-l-4 border-red-500' :
+                    'border-l-4 border-blue-500'
+                }`;
 
-            notification.innerHTML = `
-                <div class="p-4">
-                    <div class="flex items-center">
-                        <div class="flex-1 ml-3">
-                            <p class="text-sm text-gray-900">${message}</p>
-                        </div>
-                        <div class="ml-4 flex-shrink-0 flex">
-                            <button class="rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none">
-                                <span class="sr-only">Close</span>
-                                <i class="fas fa-times"></i>
-                            </button>
+                notification.innerHTML = `
+                    <div class="p-4">
+                        <div class="flex items-center">
+                            <div class="flex-1 ml-3">
+                                <p class="text-sm text-gray-900">${message}</p>
+                            </div>
+                            <div class="ml-4 flex-shrink-0 flex">
+                                <button class="rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none">
+                                    <span class="sr-only">Close</span>
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
+                `;
 
-            container.appendChild(notification);
+                container.appendChild(notification);
 
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                notification.remove();
-            }, 5000);
+                // Use requestAnimationFrame for smoother animations
+                requestAnimationFrame(() => {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateY(10px)';
+                    
+                    requestAnimationFrame(() => {
+                        notification.style.transition = 'opacity 300ms, transform 300ms';
+                        notification.style.opacity = '1';
+                        notification.style.transform = 'translateY(0)';
+                    });
+                });
 
-            // Remove on click
-            notification.querySelector('button').addEventListener('click', () => {
-                notification.remove();
-            });
-        }
+                // Auto remove after 5 seconds
+                const timerId = setTimeout(() => {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateY(10px)';
+                    
+                    // Remove DOM element after animation completes
+                    setTimeout(() => notification.remove(), 300);
+                }, 5000);
+
+                // Remove on click and clear timer
+                notification.querySelector('button').addEventListener('click', () => {
+                    clearTimeout(timerId);
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateY(10px)';
+                    
+                    // Remove DOM element after animation completes
+                    setTimeout(() => notification.remove(), 300);
+                });
+            };
+        })();
 
         // Livewire Navigation Progress Indicator
         document.addEventListener('livewire:initialized', () => {
@@ -140,9 +200,14 @@
                 progressBar.style.transition = 'width 300ms ease'
                 document.body.appendChild(progressBar)
 
-                setTimeout(() => {
-                    progressBar.style.width = '100%'
-                }, 100)
+                // Use requestAnimationFrame for smoother animation
+                requestAnimationFrame(() => {
+                    progressBar.style.width = '0';
+                    
+                    requestAnimationFrame(() => {
+                        progressBar.style.width = '100%';
+                    });
+                });
 
                 Livewire.on('navigated', () => {
                     progressBar.style.width = '100%'
