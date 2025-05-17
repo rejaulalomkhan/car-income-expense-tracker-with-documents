@@ -16,6 +16,7 @@ class Dashboard extends Component
     use WithPagination;
 
     public $dateFilter = 'this_month';
+    public $dateFilterLabel = 'This Month';
     public $startDate;
     public $endDate;
     public $selectedCar = 'all';
@@ -363,5 +364,40 @@ class Dashboard extends Component
             'records' => $this->records,
             'chartData' => $this->chartData,
         ]);
+    }
+
+    public function setDateFilter($filter)
+    {
+        $this->dateFilter = $filter;
+        
+        // Update the filter label
+        switch ($filter) {
+            case 'today':
+                $this->dateFilterLabel = 'Today';
+                break;
+            case 'yesterday':
+                $this->dateFilterLabel = 'Yesterday';
+                break;
+            case 'this_month':
+                $this->dateFilterLabel = 'This Month';
+                break;
+            case 'last_month':
+                $this->dateFilterLabel = 'Last Month';
+                break;
+            case 'this_year':
+                $this->dateFilterLabel = 'This Year';
+                break;
+            case 'last_year':
+                $this->dateFilterLabel = 'Last Year';
+                break;
+            case 'custom':
+                $this->dateFilterLabel = 'Custom Range';
+                break;
+            default:
+                $this->dateFilterLabel = 'This Month';
+        }
+        
+        // Call the existing updatedDateFilter method to handle date calculations
+        $this->updatedDateFilter($filter);
     }
 }

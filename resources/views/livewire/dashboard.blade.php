@@ -22,9 +22,54 @@
                         </div>
 
                         <!-- Quick Date Filters Dropdown -->
-                        <div class="relative w-full">
-                            <select wire:model.live="dateFilter" id="date-filter-mobile"
-                                class="w-full appearance-none bg-white border border-gray-300 rounded-md pl-10 pr-8 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <div class="relative w-full" 
+                             x-data="{ 
+                                open: false,
+                                init() {
+                                    this.$watch('open', value => {
+                                        if (value) {
+                                            this.$nextTick(() => {
+                                                this.$refs.dropdown.style.zIndex = 9999;
+                                                this.$refs.dropdown.style.position = 'absolute';
+                                            });
+                                        }
+                                    });
+                                }
+                             }" 
+                             style="position: relative; overflow: visible !important;">
+                            <div @click="open = !open" class="w-full flex items-center justify-between appearance-none bg-white border border-gray-300 rounded-md pl-10 pr-8 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer">
+                                <span x-text="$wire.dateFilterLabel || 'This Month'"></span>
+                                <div class="absolute left-3 top-2.5 text-gray-400 cursor-pointer" @click.stop="open = !open">
+                                    <i class="fas fa-filter"></i>
+                                </div>
+                                <div class="absolute right-3 top-2.5 text-gray-400 cursor-pointer" @click.stop="open = !open">
+                                    <i class="fas fa-chevron-down" :class="{'transform rotate-180': open}"></i>
+                                </div>
+                            </div>
+                            
+                            <div x-show="open" 
+                                 x-ref="dropdown"
+                                 @click.outside="open = false" 
+                                 x-init="$el.style.zIndex = 9999" 
+                                 class="absolute z-[9999] mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg py-1 date-filter-dropdown" 
+                                 style="display: none;" 
+                                 x-transition:enter="transition ease-out duration-100" 
+                                 x-transition:enter-start="transform opacity-0 scale-95" 
+                                 x-transition:enter-end="transform opacity-100 scale-100" 
+                                 x-transition:leave="transition ease-in duration-75" 
+                                 x-transition:leave-start="transform opacity-100 scale-100" 
+                                 x-transition:leave-end="transform opacity-0 scale-95">
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('today'); $dispatch('close')" @click="open = false">Today</div>
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('yesterday'); $dispatch('close')" @click="open = false">Yesterday</div>
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('this_month'); $dispatch('close')" @click="open = false">This Month</div>
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('last_month'); $dispatch('close')" @click="open = false">Last Month</div>
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('this_year'); $dispatch('close')" @click="open = false">This Year</div>
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('last_year'); $dispatch('close')" @click="open = false">Last Year</div>
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('custom'); $dispatch('close')" @click="open = false">Custom Range</div>
+                            </div>
+                            
+                            <!-- Hidden select for wire:model binding -->
+                            <select wire:model.live="dateFilter" id="date-filter-mobile" class="hidden">
                                 <option value="today">Today</option>
                                 <option value="yesterday">Yesterday</option>
                                 <option value="this_month" selected>This Month</option>
@@ -33,12 +78,6 @@
                                 <option value="last_year">Last Year</option>
                                 <option value="custom">Custom Range</option>
                             </select>
-                            <div class="absolute left-3 top-2.5 text-gray-400">
-                                <i class="fas fa-filter"></i>
-                            </div>
-                            <div class="absolute right-3 top-2.5 text-gray-400">
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -57,9 +96,54 @@
                         </div>
 
                         <!-- Quick Date Filters Dropdown -->
-                        <div class="relative">
-                            <select wire:model.live="dateFilter" id="date-filter"
-                                class="appearance-none bg-white border border-gray-300 rounded-md pl-10 pr-8 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <div class="relative" 
+                             x-data="{ 
+                                open: false,
+                                init() {
+                                    this.$watch('open', value => {
+                                        if (value) {
+                                            this.$nextTick(() => {
+                                                this.$refs.dropdown.style.zIndex = 9999;
+                                                this.$refs.dropdown.style.position = 'absolute';
+                                            });
+                                        }
+                                    });
+                                }
+                             }" 
+                             style="position: relative; overflow: visible !important;">
+                            <div @click="open = !open" class="flex items-center justify-between appearance-none bg-white border border-gray-300 rounded-md pl-10 pr-8 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer">
+                                <span x-text="$wire.dateFilterLabel || 'This Month'"></span>
+                                <div class="absolute left-3 top-2.5 text-gray-400 cursor-pointer" @click.stop="open = !open">
+                                    <i class="fas fa-filter"></i>
+                                </div>
+                                <div class="absolute right-3 top-2.5 text-gray-400 cursor-pointer" @click.stop="open = !open">
+                                    <i class="fas fa-chevron-down" :class="{'transform rotate-180': open}"></i>
+                                </div>
+                            </div>
+                            
+                            <div x-show="open" 
+                                 x-ref="dropdown"
+                                 @click.outside="open = false" 
+                                 x-init="$el.style.zIndex = 9999" 
+                                 class="absolute z-[9999] mt-1 bg-white border border-gray-300 rounded-md shadow-lg py-1 w-48 date-filter-dropdown" 
+                                 style="display: none;"
+                                 x-transition:enter="transition ease-out duration-100" 
+                                 x-transition:enter-start="transform opacity-0 scale-95" 
+                                 x-transition:enter-end="transform opacity-100 scale-100" 
+                                 x-transition:leave="transition ease-in duration-75" 
+                                 x-transition:leave-start="transform opacity-100 scale-100" 
+                                 x-transition:leave-end="transform opacity-0 scale-95">
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('today'); $dispatch('close')" @click="open = false">Today</div>
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('yesterday'); $dispatch('close')" @click="open = false">Yesterday</div>
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('this_month'); $dispatch('close')" @click="open = false">This Month</div>
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('last_month'); $dispatch('close')" @click="open = false">Last Month</div>
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('this_year'); $dispatch('close')" @click="open = false">This Year</div>
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('last_year'); $dispatch('close')" @click="open = false">Last Year</div>
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('custom'); $dispatch('close')" @click="open = false">Custom Range</div>
+                            </div>
+                            
+                            <!-- Hidden select for wire:model binding -->
+                            <select wire:model.live="dateFilter" id="date-filter" class="hidden">
                                 <option value="today">Today</option>
                                 <option value="yesterday">Yesterday</option>
                                 <option value="this_month" selected>This Month</option>
@@ -68,12 +152,6 @@
                                 <option value="last_year">Last Year</option>
                                 <option value="custom">Custom Range</option>
                             </select>
-                            <div class="absolute left-3 top-2.5 text-gray-400">
-                                <i class="fas fa-filter"></i>
-                            </div>
-                            <div class="absolute right-3 top-2.5 text-gray-400">
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
                         </div>
                     </div>
 
@@ -666,6 +744,39 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
+<style>
+    /* Fix for dropdown z-index issues */
+    .date-filter-dropdown {
+        position: absolute !important;
+        z-index: 9999 !important; /* Force highest z-index */
+        background-color: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        overflow: visible;
+    }
+    
+    /* Ensure all dropdowns appear above other elements */
+    [x-data] {
+        position: relative;
+    }
+    
+    /* Additional fix for Alpine.js x-show elements */
+    div[x-show] {
+        z-index: 9999 !important;
+    }
+    
+    /* Fix for parent containers */
+    .py-12, .max-w-7xl, .bg-white, .p-4, .sm\:p-6, .block, .sm\:hidden, .mb-4, .flex, .flex-col, .space-y-2 {
+        overflow: visible !important;
+    }
+    
+    /* Ensure dropdown remains visible */
+    .date-filter-dropdown[style*="display: block"] {
+        z-index: 9999 !important;
+        position: absolute !important;
+    }
+</style>
 @endpush
 
 @push('scripts')
@@ -699,6 +810,30 @@
                 }
             }
         });
+
+        // Enhanced fix for dropdown visibility
+        document.addEventListener('click', function(e) {
+            // Force all open dropdowns to be visible with highest z-index
+            document.querySelectorAll('.date-filter-dropdown[x-show="true"]').forEach(function(dropdown) {
+                dropdown.style.display = 'block';
+                dropdown.style.position = 'absolute';
+                dropdown.style.zIndex = '9999';
+            });
+        });
+        
+        // Ensure dropdowns are visible
+        function fixDropdowns() {
+            document.querySelectorAll('.date-filter-dropdown').forEach(function(dropdown) {
+                if (window.getComputedStyle(dropdown).display === 'block') {
+                    dropdown.style.zIndex = '9999';
+                    dropdown.style.position = 'absolute';
+                }
+            });
+        }
+        
+        // Run on page load and periodically check
+        fixDropdowns();
+        setInterval(fixDropdowns, 100); // Check every 100ms
 
         // Listen for Livewire events to update the date pickers
         Livewire.on('dateRangeUpdated', (data) => {
