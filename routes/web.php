@@ -72,6 +72,14 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/create', CompanyDocumentCreate::class)->name('create');
             Route::get('/{document}', CompanyDocumentEdit::class)->name('edit');
         });
+
+        // Personal Documents
+        Route::prefix('personal')->name('personal.')->group(function () {
+            Route::get('/', App\Livewire\Documents\Personal\Index::class)->name('index');
+            Route::get('/create', App\Livewire\Documents\Personal\Create::class)->name('create');
+            Route::get('/{document}', App\Livewire\Documents\Personal\Edit::class)->name('edit');
+            Route::get('/{document}/view', App\Livewire\Documents\Personal\View::class)->name('view');
+        });
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

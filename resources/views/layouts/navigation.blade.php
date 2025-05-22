@@ -49,6 +49,10 @@
                                     <i class="fas fa-building mr-2"></i>
                                     {{ __('Company Documents') }}
                                 </x-dropdown-link>
+                                <x-dropdown-link :href="route('documents.personal.index')" wire:navigate.hover>
+                                    <i class="fas fa-user mr-2"></i>
+                                    {{ __('Personal Documents') }}
+                                </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
                     </div>
@@ -145,6 +149,11 @@
             <x-responsive-nav-link :href="route('documents.company.index')" :active="request()->routeIs('documents.company.*')" wire:navigate.hover>
                 <i class="fas fa-building mr-2"></i>
                 {{ __('Company Documents') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('documents.personal.index')" :active="request()->routeIs('documents.personal.*')" wire:navigate.hover>
+                <i class="fas fa-user mr-2"></i>
+                {{ __('Personal Documents') }}
             </x-responsive-nav-link>
 
             <x-responsive-nav-link :href="route('incomes.index')" :active="request()->routeIs('incomes.*')" wire:navigate.hover>
