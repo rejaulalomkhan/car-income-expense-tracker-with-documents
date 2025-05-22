@@ -180,7 +180,7 @@
                     <div class="flex-1">
                         <p class="text-sm text-gray-500 mb-1">Total Income</p>
                         <div class="flex items-center justify-between">
-                            <div class="text-2xl font-bold text-gray-900">${{ number_format($stats['total_income'], 2) }}</div>
+                            <div class="text-2xl font-bold text-gray-900">{{ number_format($stats['total_income'], 2) }}</div>
                             <span class="text-xs px-1.5 py-0.5 rounded-full {{ $percentageChanges['income'] >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                 {{ $percentageChanges['income'] >= 0 ? '+' : '' }}{{ number_format($percentageChanges['income'], 1) }}%
                             </span>
@@ -200,7 +200,7 @@
                     <div class="flex-1">
                         <p class="text-sm text-gray-500 mb-1">Total Expenses</p>
                         <div class="flex items-center justify-between">
-                            <div class="text-2xl font-bold text-gray-900">${{ number_format($stats['total_expense'], 2) }}</div>
+                            <div class="text-2xl font-bold text-gray-900">{{ number_format($stats['total_expense'], 2) }}</div>
                             <span class="text-xs px-1.5 py-0.5 rounded-full {{ $percentageChanges['expense'] >= 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
                                 {{ $percentageChanges['expense'] >= 0 ? '+' : '' }}{{ number_format($percentageChanges['expense'], 1) }}%
                             </span>
@@ -223,7 +223,7 @@
                     <div class="flex-1">
                         <p class="text-sm text-gray-500 mb-1">Net Income</p>
                         <div class="flex items-center justify-between">
-                            <div class="text-2xl font-bold text-gray-900">${{ number_format($stats['net_income'], 2) }}</div>
+                            <div class="text-2xl font-bold text-gray-900">{{ number_format($stats['net_income'], 2) }}</div>
                             <span class="text-xs px-1.5 py-0.5 rounded-full {{ $percentageChanges['net_income'] >= 0 ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800' }}">
                                 {{ $percentageChanges['net_income'] >= 0 ? '+' : '' }}{{ number_format($percentageChanges['net_income'], 1) }}%
                             </span>
