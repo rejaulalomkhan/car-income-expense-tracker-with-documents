@@ -70,7 +70,7 @@
                                 <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('last_month'); $dispatch('close')" @click="open = false">Last Month</div>
                                 <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('this_year'); $dispatch('close')" @click="open = false">This Year</div>
                                 <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('last_year'); $dispatch('close')" @click="open = false">Last Year</div>
-                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('custom'); $dispatch('close')" @click="open = false">Custom Range</div>
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('custom'); $dispatch('close')" @click="open = false; window.dispatchEvent(new Event('openDateRangePicker'))">Custom Range</div>
                             </div>
                             
                             <!-- Hidden select for wire:model binding -->
@@ -150,7 +150,7 @@
                                 <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('last_month'); $dispatch('close')" @click="open = false">Last Month</div>
                                 <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('this_year'); $dispatch('close')" @click="open = false">This Year</div>
                                 <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('last_year'); $dispatch('close')" @click="open = false">Last Year</div>
-                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('custom'); $dispatch('close')" @click="open = false">Custom Range</div>
+                                <div class="px-2 py-1 cursor-pointer hover:bg-gray-100" wire:click="setDateFilter('custom'); $dispatch('close')" @click="open = false; window.dispatchEvent(new Event('openDateRangePicker'))">Custom Range</div>
                             </div>
                             
                             <!-- Hidden select for wire:model binding -->
@@ -807,8 +807,10 @@
                 ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
                 ('0' + date.getDate()).slice(-2);
         }
+        let dateRangePickerInstance = null;
+        let dateRangePickerMobileInstance = null;
         function initPickers() {
-            flatpickr("#date-range", {
+            dateRangePickerInstance = flatpickr("#date-range", {
                 mode: "range",
                 dateFormat: "Y-m-d",
                 defaultDate: ["{{ $startDate }}", "{{ $endDate }}"],
@@ -820,7 +822,7 @@
                     }
                 }
             });
-            flatpickr("#date-range-mobile", {
+            dateRangePickerMobileInstance = flatpickr("#date-range-mobile", {
                 mode: "range",
                 dateFormat: "Y-m-d",
                 defaultDate: ["{{ $startDate }}", "{{ $endDate }}"],
@@ -836,6 +838,20 @@
         initPickers();
         Livewire.hook('message.processed', (message, component) => {
             initPickers();
+        });
+        // Listen for custom event to open the date picker
+        window.addEventListener('openDateRangePicker', function(e) {
+            if (window.innerWidth < 640) {
+                // Mobile
+                if (dateRangePickerMobileInstance) {
+                    setTimeout(() => dateRangePickerMobileInstance.open(), 100);
+                }
+            } else {
+                // Desktop
+                if (dateRangePickerInstance) {
+                    setTimeout(() => dateRangePickerInstance.open(), 100);
+                }
+            }
         });
 
         // Enhanced fix for dropdown visibility
