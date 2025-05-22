@@ -16,7 +16,7 @@ class Create extends Component
 
     // Predefined expense categories
     public $categories = [
-        'Others',
+        'Bank Solvency',
         'Maintenance',
         'Fuel',
         'Driver',
@@ -24,7 +24,8 @@ class Create extends Component
         'Tolls',
         'Garage Rent',
         'Spare Parts',
-        'Documents Update'
+        'Documents Update',
+        'Others'
     ];
 
     protected function rules()
