@@ -28,11 +28,13 @@ class Index extends Component
     {
         $query = PersonalDocument::query()
             ->when($this->search, function ($query) {
-                $query->where('doc_name', 'like', '%' . $this->search . '%');
+                $query->where('doc_name', 'like', '%' . $this->search . '%')
+                    ->orWhere('doc_description', 'like', '%' . $this->search . '%');
             })
             ->when($this->category, function ($query) {
                 $query->where('doc_category', $this->category);
-            });
+            })
+            ->orderBy('created_at', 'desc');
 
         return view('livewire.documents.personal.index', [
             'documents' => $query->paginate(10),
