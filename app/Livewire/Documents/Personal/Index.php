@@ -37,7 +37,7 @@ class Index extends Component
             ->orderBy('created_at', 'desc');
 
         return view('livewire.documents.personal.index', [
-            'documents' => $query->paginate(10),
+            'documents' => $query->paginate(15),
             'categories' => PersonalDocument::getCategories()
         ]);
     }
