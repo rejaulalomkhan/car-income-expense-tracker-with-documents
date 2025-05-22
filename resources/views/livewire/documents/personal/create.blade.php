@@ -4,9 +4,9 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-semibold">Add New Personal Document</h2>
-                        <a href="{{ route('documents.personal.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                            <i class="fas fa-arrow-left mr-2"></i>Back to List
+                        <h2 class="text-lg sm:text-2xl font-semibold">Add New Personal Document</h2>
+                        <a href="{{ route('documents.personal.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-semibold py-1.5 px-3 sm:py-2 sm:px-4 rounded text-xs sm:text-base">
+                            <i class="fas fa-arrow-left mr-1 sm:mr-2"></i><span class="hidden xs:inline">Back to List</span><span class="inline xs:hidden">Back</span>
                         </a>
                     </div>
 
