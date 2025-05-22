@@ -11,14 +11,19 @@
                     </div>
 
                     <div class="flex flex-col space-y-2">
-                        <!-- Date Range Picker -->
-                        <div class="relative w-full">
+                        <div class="relative w-full flex items-center">
                             <input type="text" id="date-range-mobile" placeholder="Select date range"
                                 class="w-full appearance-none bg-white border border-gray-300 rounded-md pl-10 pr-8 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 readonly>
                             <div class="absolute left-3 top-2.5 text-gray-400">
                                 <i class="fas fa-calendar"></i>
                             </div>
+                            <button type="button"
+                                onclick="spinAndReload(this)"
+                                class="ml-2 p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-blue-600 transition"
+                                title="Reload">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
                         </div>
 
                         <!-- Quick Date Filters Dropdown -->
@@ -86,13 +91,19 @@
                 <div class="hidden sm:flex justify-between items-center">
                     <div class="flex items-center space-x-4">
                         <!-- Date Range Picker -->
-                        <div class="relative">
+                        <div class="relative flex items-center">
                             <input type="text" id="date-range" placeholder="Select date range"
                                 class="appearance-none bg-white border border-gray-300 rounded-md pl-10 pr-8 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 readonly>
                             <div class="absolute left-3 top-2.5 text-gray-400">
                                 <i class="fas fa-calendar"></i>
                             </div>
+                            <button type="button"
+                                onclick="spinAndReload(this)"
+                                class="ml-2 p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-blue-600 transition"
+                                title="Reload">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
                         </div>
 
                         <!-- Quick Date Filters Dropdown -->
@@ -776,6 +787,13 @@
         z-index: 9999 !important;
         position: absolute !important;
     }
+    /* Reload icon spin animation */
+    .reload-spin {
+        animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+        100% { transform: rotate(360deg); }
+    }
 </style>
 @endpush
 
@@ -784,31 +802,40 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     document.addEventListener('livewire:initialized', function () {
-        // Initialize date range pickers
-        const dateRangePicker = flatpickr("#date-range", {
-            mode: "range",
-            dateFormat: "Y-m-d",
-            defaultDate: ["{{ $startDate }}", "{{ $endDate }}"],
-            onChange: function(selectedDates, dateStr, instance) {
-                if (selectedDates.length === 2) {
-                    @this.set('startDate', selectedDates[0].toISOString().split('T')[0]);
-                    @this.set('endDate', selectedDates[1].toISOString().split('T')[0]);
-                    @this.set('dateFilter', 'custom');
+        function formatDateToYMD(date) {
+            return date.getFullYear() + '-' +
+                ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+                ('0' + date.getDate()).slice(-2);
+        }
+        function initPickers() {
+            flatpickr("#date-range", {
+                mode: "range",
+                dateFormat: "Y-m-d",
+                defaultDate: ["{{ $startDate }}", "{{ $endDate }}"],
+                onChange: function(selectedDates, dateStr, instance) {
+                    if (selectedDates.length === 2) {
+                        @this.set('startDate', formatDateToYMD(selectedDates[0]));
+                        @this.set('endDate', formatDateToYMD(selectedDates[1]));
+                        @this.set('dateFilter', 'custom');
+                    }
                 }
-            }
-        });
-
-        const dateRangePickerMobile = flatpickr("#date-range-mobile", {
-            mode: "range",
-            dateFormat: "Y-m-d",
-            defaultDate: ["{{ $startDate }}", "{{ $endDate }}"],
-            onChange: function(selectedDates, dateStr, instance) {
-                if (selectedDates.length === 2) {
-                    @this.set('startDate', selectedDates[0].toISOString().split('T')[0]);
-                    @this.set('endDate', selectedDates[1].toISOString().split('T')[0]);
-                    @this.set('dateFilter', 'custom');
+            });
+            flatpickr("#date-range-mobile", {
+                mode: "range",
+                dateFormat: "Y-m-d",
+                defaultDate: ["{{ $startDate }}", "{{ $endDate }}"],
+                onChange: function(selectedDates, dateStr, instance) {
+                    if (selectedDates.length === 2) {
+                        @this.set('startDate', formatDateToYMD(selectedDates[0]));
+                        @this.set('endDate', formatDateToYMD(selectedDates[1]));
+                        @this.set('dateFilter', 'custom');
+                    }
                 }
-            }
+            });
+        }
+        initPickers();
+        Livewire.hook('message.processed', (message, component) => {
+            initPickers();
         });
 
         // Enhanced fix for dropdown visibility
@@ -1015,5 +1042,11 @@
             console.error('Chart error:', error);
         });
     });
+
+    function spinAndReload(btn) {
+        const icon = btn.querySelector('i');
+        if (icon) icon.classList.add('reload-spin');
+        window.location.reload();
+    }
 </script>
 @endpush

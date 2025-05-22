@@ -134,7 +134,8 @@ class Dashboard extends Component
         try {
             // Calculate total income
             $incomeQuery = Income::query()
-                ->whereBetween('date', [$this->startDate, $this->endDate]);
+                ->whereDate('date', '>=', $this->startDate)
+                ->whereDate('date', '<=', $this->endDate);
 
             if ($this->selectedCar !== 'all') {
                 $incomeQuery->where('car_id', $this->selectedCar);
@@ -144,7 +145,8 @@ class Dashboard extends Component
 
             // Calculate total expenses
             $expenseQuery = Expense::query()
-                ->whereBetween('date', [$this->startDate, $this->endDate]);
+                ->whereDate('date', '>=', $this->startDate)
+                ->whereDate('date', '<=', $this->endDate);
 
             if ($this->selectedCar !== 'all') {
                 $expenseQuery->where('car_id', $this->selectedCar);
@@ -286,11 +288,13 @@ class Dashboard extends Component
         $startDate = Carbon::parse($this->startDate);
         $endDate = Carbon::parse($this->endDate);
 
-        $incomes = Income::whereBetween('date', [$startDate, $endDate])
+        $incomes = Income::whereDate('date', '>=', $startDate)
+            ->whereDate('date', '<=', $endDate)
             ->get()
             ->groupBy('car_id');
 
-        $expenses = Expense::whereBetween('date', [$startDate, $endDate])
+        $expenses = Expense::whereDate('date', '>=', $startDate)
+            ->whereDate('date', '<=', $endDate)
             ->get()
             ->groupBy('car_id');
 
