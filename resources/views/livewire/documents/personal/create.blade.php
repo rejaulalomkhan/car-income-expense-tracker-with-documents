@@ -33,11 +33,7 @@
                         <div class="border-2 border-dashed border-gray-300 rounded-lg p-6">
                             <div class="text-center">
                                 <x-input-label for="doc_scancopy" value="Upload Document Scan Copy *" class="text-lg font-semibold" />
-                                <div class="mt-2 space-y-2">
-                                    <div class="text-sm text-gray-500 space-y-1">
-                                        <p><span class="font-medium">Maximum file size:</span> 20MB , <span class="font-medium">Supported formats:</span> PDF, JPG, JPEG, PNG</p>
-                                    </div>
-                                </div>
+                                
                                 <div class="mt-4">
                                     <input type="file" wire:model="doc_scancopy" id="doc_scancopy" class="block w-full text-sm text-gray-500
                                         file:mr-4 file:py-2 file:px-4
@@ -47,6 +43,12 @@
                                         hover:file:bg-indigo-100" required>
                                 </div>
                                 <x-input-error :messages="$errors->get('doc_scancopy')" class="mt-2" />
+                                <div wire:loading wire:target="doc_scancopy" class="mt-1 text-sm text-gray-500">
+                                    Uploading...
+                                </div>
+                                <div wire:loading.remove wire:target="doc_scancopy" class="mt-1 text-sm text-gray-500">
+                                    <p><span class="font-medium">Maximum file size:</span> 20MB , <span class="font-medium">Supported formats:</span> PDF, JPG, JPEG, PNG</p>
+                                </div>
                             </div>
                         </div>
 
