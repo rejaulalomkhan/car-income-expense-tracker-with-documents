@@ -41,6 +41,11 @@ class Index extends Component
         $this->resetPage();
     }
 
+    public function updatingSelectedCategory()
+    {
+        $this->resetPage();
+    }
+
     public function delete(Expense $expense)
     {
         try {
@@ -115,7 +120,7 @@ class Index extends Component
                 $query->where('car_id', $this->selectedCar);
             })
             ->when($this->selectedCategory, function ($query) {
-                $query->where('category_id', $this->selectedCategory);
+                $query->where('category', $this->selectedCategory);
             })
             ->whereBetween('date', [
                 $startDate->format('Y-m-d'),
@@ -131,6 +136,7 @@ class Index extends Component
         return view('livewire.expenses.index', [
             'expenses' => $expenses,
             'cars' => Car::all(),
+            'categories' => $this->getCategories(),
             'dateRangeText' => $this->getDateRangeText($startDate, $endDate),
             'totalAmount' => $totalAmount,
         ]);
@@ -150,5 +156,10 @@ class Index extends Component
             'all_time' => 'All Time',
             default => $startDate->format('M j, Y') . ' - ' . $endDate->format('M j, Y')
         };
+    }
+
+    public function getCategories()
+    {
+        return Expense::select('category')->distinct()->get()->pluck('category');
     }
 }

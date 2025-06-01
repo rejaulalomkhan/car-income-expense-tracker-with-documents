@@ -57,7 +57,7 @@
                 </div>
                 @endif
 
-                <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -73,6 +73,15 @@
                             <option value="">All Cars</option>
                             @foreach($cars as $car)
                             <option value="{{ $car->id }}">{{ $car->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <select wire:model.live="selectedCategory"
+                            class="w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            <option value="">All Categories</option>
+                            @foreach($categories as $category)
+                            <option value="{{ $category }}">{{ $category }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -184,6 +193,9 @@
                                             No expenses found 
                                             @if($selectedCar)
                                                 for {{ $cars->firstWhere('id', $selectedCar)->name }}
+                                            @endif
+                                            @if($selectedCategory)
+                                                in category "{{ $selectedCategory }}"
                                             @endif
                                             @if($dateFilter)
                                                 in {{ $dateRangeText }}
