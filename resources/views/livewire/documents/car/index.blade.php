@@ -74,6 +74,10 @@
                                     </div>
                                 </th>
                                 <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Comment
+                                </th>
+                                <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                                     wire:click="sortBy('document_expiry_date')">
                                     <div class="flex items-center">
@@ -121,6 +125,9 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="text-sm text-gray-900">{{ $document->getTypeLabel() }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-900">{{ $document->document_comment }}</span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="text-sm text-gray-900">{{
